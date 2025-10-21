@@ -1,0 +1,81 @@
+name: commit-stage-monolith
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+        - 'monolith/**'
+        - '.github/workflows/commit-stage-monolith.yml'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+        - 'monolith/**'
+        - '.github/workflows/commit-stage-monolith.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: commit-stage-monolith-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    outputs:
+      image-latest-url: ${{ steps.publish.outputs.image-latest-url }}
+      image-digest-url: ${{ steps.publish.outputs.image-digest-url }}
+      image-created-timestamp: ${{ steps.publish.outputs.image-created-timestamp }}
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        java-version: 17
+        distribution: temurin
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v4.0.0
+    
+    - name: Make Gradle Wrapper executable
+      run: chmod +x ./gradlew
+      shell: bash
+      working-directory: monolith
+
+    - name: Build with Gradle Wrapper
+      run: ./gradlew build
+      working-directory: monolith
+
+    - name: Publish Docker Image
+      id: publish
+      uses: optivem/publish-docker-image-action@v1
+      with:
+        working-directory: monolith
+        image-name: monolith
+        registry: ghcr.io
+        registry-username: ${{ github.actor }}
+        image-namespace: ${{ github.repository }}
+        image-latest-tag: latest
+        commit-sha: ${{ github.sha }}
+        dockerfile: Dockerfile
+      env:
+        REGISTRY_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+
+  summary:
+    needs: build
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      
+    - name: Commit Stage Summary
+      uses: optivem/summarize-commit-stage-action@v1
+      with:
+        stage-result: ${{ needs.build.result }}
+        success-artifact-url: ${{ needs.build.outputs.image-latest-url }}
