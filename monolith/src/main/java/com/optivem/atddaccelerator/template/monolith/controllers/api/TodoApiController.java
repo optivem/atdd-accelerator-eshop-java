@@ -18,7 +18,7 @@ public class TodoApiController {
     private final RestTemplate restTemplate = new RestTemplate();
 
     @GetMapping("/todos/{id}")
-    public Todo getTodo(@PathVariable int id) {
+    public Todo getTodo(@PathVariable("id") int id) {
         String url = todosApiHost + "/todos/" + id;
         return restTemplate.getForObject(url, Todo.class);
     }
