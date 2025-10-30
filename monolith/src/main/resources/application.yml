@@ -1,7 +1,33 @@
-spring:
-  application:
-    name: monolith
 
-todos:
-  api:
-    host: ${TODOS_API_HOST:https://jsonplaceholder.typicode.com}
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+erp:
+  url: https://optivem.free.beeceptor.com/sap/api
+
+---
+spring:
+  config:
+    activate:
+      on-profile: qa
+erp:
+  url: https://optivem.free.beeceptor.com/sap-test/api
+
+---
+spring:
+  config:
+    activate:
+      on-profile: e2e
+erp:
+  url: https://optivem.free.beeceptor.com/sap-test/api
+
+---
+spring:
+  config:
+    activate:
+      on-profile: acc
+
+erp:
+  url: http://localhost:8089

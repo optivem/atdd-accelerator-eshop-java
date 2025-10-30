@@ -23,6 +23,9 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'com.microsoft.playwright:playwright:1.44.0'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	testImplementation 'org.projectlombok:lombok:1.18.38'
+	testAnnotationProcessor 'org.projectlombok:lombok:1.18.38'
 }
 
 tasks.named('test') {

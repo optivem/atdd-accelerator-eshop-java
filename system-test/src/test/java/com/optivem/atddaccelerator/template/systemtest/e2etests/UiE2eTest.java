@@ -1,61 +1,72 @@
 package com.optivem.atddaccelerator.template.systemtest.e2etests;
 
 import com.microsoft.playwright.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.regex.Pattern;
+
 class UiE2eTest {
 
-    @Test
-    void fetchTodo_shouldDisplayTodoDataInUI() {
-        // DISCLAIMER: This is an example of a badly written test
-        // which unfortunately simulates real-life software test projects.
-        // This is the starting point for our ATDD Accelerator exercises.
+    private static final int DEFAULT_PORT = 8080;
+    private static final int DEFAULT_WAIT_SECONDS = 10;
+    
+    private Playwright playwright;
+    private Browser browser;
+    private Page page;
+    private String baseUrl;
 
-        try (Playwright playwright = Playwright.create()) {
-            Browser browser = playwright.chromium().launch();
-            Page page = browser.newPage();
-            
-            // Navigate to the todo page
-            page.navigate("http://localhost:8080/todos");
-            
-            // 1. Check there's a textbox with id
-            Locator todoIdInput = page.locator("#todoId");
-            assertTrue(todoIdInput.isVisible(), "Todo ID input textbox should be visible");
-            
-            // 2. Input value 4 into that textbox
-            todoIdInput.fill("4");
-            
-            // 3. Click "Fetch Todo" button
-            Locator fetchButton = page.locator("#fetchTodo");
-            fetchButton.click();
-            
-            // 4. Wait for the result to appear and contain actual data
-            Locator todoResult = page.locator("#todoResult");
-            
-            // Wait for the result div to become visible first
-            todoResult.waitFor(new Locator.WaitForOptions().setTimeout(5000));
-            
-            // Wait a bit more for the API call to complete and content to load
-            page.waitForTimeout(3000);
-            
-            String resultText = todoResult.textContent();
-            
-            // Debug: Print the actual result text
-            System.out.println("Actual result text: " + resultText);
-            
-            // Verify the todo data is displayed (more flexible checking)
-            assertTrue(resultText.contains("userId") && (resultText.contains("1") || resultText.contains(": 1")), 
-                      "Result should contain userId: 1. Actual text: " + resultText);
-            assertTrue(resultText.contains("id") && (resultText.contains("4") || resultText.contains(": 4")), 
-                      "Result should contain id: 4. Actual text: " + resultText);
-            assertTrue(resultText.contains("title"), 
-                      "Result should contain title field. Actual text: " + resultText);
-            assertTrue(resultText.contains("completed"), 
-                      "Result should contain completed field. Actual text: " + resultText);
-            
+    @BeforeEach
+    void setUp() {
+        playwright = Playwright.create();
+        browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
+        page = browser.newPage();
+        baseUrl = "http://localhost:" + DEFAULT_PORT;
+    }
+
+    @AfterEach
+    void tearDown() {
+        if (page != null) {
+            page.close();
+        }
+        if (browser != null) {
             browser.close();
         }
+        if (playwright != null) {
+            playwright.close();
+        }
+    }
+
+    @Test
+    void shouldCalculateTotalOrderPrice() {
+        // Act
+        page.navigate(baseUrl + "/shop");
+
+        Locator skuInput = page.locator("[aria-label='SKU']");
+        skuInput.fill("ABC1001");
+
+        Locator quantityInput = page.locator("[aria-label='Quantity']");
+        quantityInput.fill("5");
+
+        Locator placeOrderButton = page.locator("[aria-label='Place Order']");
+        placeOrderButton.click();
+
+        // Wait for confirmation message to appear
+        Locator confirmationMessage = page.locator("[role='alert']");
+        confirmationMessage.waitFor(new Locator.WaitForOptions().setTimeout(DEFAULT_WAIT_SECONDS * 1000));
+
+        String confirmationMessageText = confirmationMessage.textContent();
+
+        Pattern pattern = Pattern.compile("Success! Order has been created with Order Number ([\\w-]+) and Total Price \\$(\\d+(?:\\.\\d{2})?)");
+        var matcher = pattern.matcher(confirmationMessageText);
+
+        assertTrue(matcher.find(), "Confirmation message should match expected pattern. Actual: " + confirmationMessageText);
+
+        String totalPriceString = matcher.group(2);
+        double totalPrice = Double.parseDouble(totalPriceString);
+        assertTrue(totalPrice > 0, "Total price should be positive. Actual: " + totalPrice);
     }
 }
