@@ -2,6 +2,7 @@ package com.optivem.atddaccelerator.template.monolith.core.services;
 
 import com.optivem.atddaccelerator.template.monolith.core.entities.Order;
 import com.optivem.atddaccelerator.template.monolith.core.entities.OrderStatus;
+import com.optivem.atddaccelerator.template.monolith.core.exceptions.OrderCancellationNotAllowedException;
 import com.optivem.atddaccelerator.template.monolith.core.repositories.OrderRepository;
 import com.optivem.atddaccelerator.template.monolith.core.services.external.ErpGateway;
 import com.optivem.atddaccelerator.template.monolith.core.dtos.GetOrderResponse;
@@ -10,6 +11,7 @@ import com.optivem.atddaccelerator.template.monolith.core.dtos.PlaceOrderRespons
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalTime;
 
 @Service
 public class OrderService {
@@ -61,6 +63,14 @@ public class OrderService {
     }
 
     public void cancelOrder(String orderNumber) {
+        var currentTime = LocalTime.now();
+        var cancellationBlockStart = LocalTime.of(10, 0);
+        var cancellationBlockEnd = LocalTime.of(11, 0);
+        
+        if (!currentTime.isBefore(cancellationBlockStart) && currentTime.isBefore(cancellationBlockEnd)) {
+            throw new OrderCancellationNotAllowedException("Order cancellation is not allowed between 10:00 and 11:00");
+        }
+        
         var order = orderRepository.getOrder(orderNumber);
         order.setStatus(OrderStatus.CANCELLED);
         orderRepository.saveOrder(order);
