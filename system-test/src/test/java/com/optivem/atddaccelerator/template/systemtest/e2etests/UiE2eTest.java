@@ -126,4 +126,65 @@ class UiE2eTest {
         assertTrue(displayUnitPrice.inputValue().startsWith("$"), "Should display unit price with $ symbol");
         assertTrue(displayTotalPrice.inputValue().startsWith("$"), "Should display total price with $ symbol");
     }
+
+    @Test
+    void shouldCancelOrder() {
+        // Arrange - First place an order
+        page.navigate(baseUrl + "/shop.html");
+
+        var productIdInput = page.locator("[aria-label='Product ID']");
+        productIdInput.fill("12");
+
+        var quantityInput = page.locator("[aria-label='Quantity']");
+        quantityInput.fill("2");
+
+        var placeOrderButton = page.locator("[aria-label='Place Order']");
+        placeOrderButton.click();
+
+        // Wait for confirmation message and extract order number
+        var confirmationMessage = page.locator("[role='alert']");
+        confirmationMessage.waitFor(new Locator.WaitForOptions().setTimeout(TestConfiguration.getWaitSeconds() * 1000));
+
+        var confirmationMessageText = confirmationMessage.textContent();
+        var pattern = Pattern.compile("Success! Order has been created with Order Number ([\\w-]+)");
+        var matcher = pattern.matcher(confirmationMessageText);
+        assertTrue(matcher.find(), "Should extract order number from confirmation message");
+        var orderNumber = matcher.group(1);
+
+        // Act - Navigate to Order History and search for the order
+        page.navigate(baseUrl + "/");
+        
+        var orderHistoryLink = page.locator("a[href='/order-history.html']");
+        orderHistoryLink.click();
+
+        var orderNumberInput = page.locator("[aria-label='Order Number']");
+        orderNumberInput.fill(orderNumber);
+
+        var searchButton = page.locator("[aria-label='Search']");
+        searchButton.click();
+
+        // Wait for order details to appear
+        var orderDetails = page.locator("[role='alert']");
+        orderDetails.waitFor(new Locator.WaitForOptions().setTimeout(TestConfiguration.getWaitSeconds() * 1000));
+
+        // Verify initial status is PLACED
+        var displayStatusBeforeCancel = page.locator("[aria-label='Display Status']");
+        assertTrue(displayStatusBeforeCancel.inputValue().equals("PLACED"), "Initial status should be PLACED");
+
+        // Click Cancel Order button
+        page.onDialog(dialog -> dialog.accept()); // Auto-accept the alert
+        var cancelButton = page.locator("[aria-label='Cancel Order']");
+        cancelButton.click();
+
+        // Wait a moment for the order to be cancelled and details refreshed
+        page.waitForTimeout(1000);
+
+        // Assert - Verify status changed to CANCELLED
+        var displayStatusAfterCancel = page.locator("[aria-label='Display Status']");
+        assertTrue(displayStatusAfterCancel.inputValue().equals("CANCELLED"), "Status should be CANCELLED after cancellation");
+
+        // Verify Cancel button is no longer visible (since order is already cancelled)
+        var cancelButtonAfter = page.locator("[aria-label='Cancel Order']");
+        assertTrue(cancelButtonAfter.count() == 0, "Cancel button should not be visible for cancelled orders");
+    }
 }
