@@ -9,10 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class ShopApiController {
-    @GetMapping("/api/shop/echo")
-    public ResponseEntity<Void> echo() {
-        return ResponseEntity.ok().build();
-    }
+
 
     @PostMapping("/api/shop/order")
     public ResponseEntity<PlaceOrderResponse> placeOrder(@RequestBody PlaceOrderRequest request) {
