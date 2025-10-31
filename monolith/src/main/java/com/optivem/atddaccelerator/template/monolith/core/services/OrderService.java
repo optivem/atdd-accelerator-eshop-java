@@ -1,6 +1,7 @@
 package com.optivem.atddaccelerator.template.monolith.core.services;
 
 import com.optivem.atddaccelerator.template.monolith.core.entities.Order;
+import com.optivem.atddaccelerator.template.monolith.core.entities.OrderStatus;
 import com.optivem.atddaccelerator.template.monolith.core.repositories.OrderRepository;
 import com.optivem.atddaccelerator.template.monolith.core.services.external.ErpGateway;
 import com.optivem.atddaccelerator.template.monolith.core.dtos.GetOrderResponse;
@@ -61,7 +62,7 @@ public class OrderService {
 
     public void cancelOrder(String orderNumber) {
         var order = orderRepository.getOrder(orderNumber);
-        order.setStatus(com.optivem.atddaccelerator.template.monolith.core.entities.OrderStatus.CANCELLED);
+        order.setStatus(OrderStatus.CANCELLED);
         orderRepository.saveOrder(order);
     }
 }
