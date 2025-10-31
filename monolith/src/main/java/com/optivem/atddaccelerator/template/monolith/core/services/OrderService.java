@@ -24,8 +24,8 @@ public class OrderService {
         var orderNumber = orderRepository.nextOrderNumber();
         var productId = request.getProductId();
         var quantity = request.getQuantity();
-        BigDecimal unitPrice = erpGateway.getUnitPrice(productId);
-        BigDecimal totalPrice = unitPrice.multiply(BigDecimal.valueOf(quantity));
+        var unitPrice = erpGateway.getUnitPrice(productId);
+        var totalPrice = unitPrice.multiply(BigDecimal.valueOf(quantity));
         var order = new Order(orderNumber, productId, quantity, unitPrice, totalPrice);
 
         orderRepository.saveOrder(order);

@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class EshopApplication {
 
     public static void main(String[] args) {
-        String erpUrl = System.getenv("ERP_URL");
+        var erpUrl = System.getenv("ERP_URL");
         System.out.println("ERP_URL: " + erpUrl);
         SpringApplication.run(EshopApplication.class, args);
     }

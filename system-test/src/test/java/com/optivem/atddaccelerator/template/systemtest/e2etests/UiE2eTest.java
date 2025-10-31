@@ -43,28 +43,28 @@ class UiE2eTest {
         // Act
         page.navigate(baseUrl + "/shop.html");
 
-        Locator productIdInput = page.locator("[aria-label='Product ID']");
+        var productIdInput = page.locator("[aria-label='Product ID']");
         productIdInput.fill("1001");
 
-        Locator quantityInput = page.locator("[aria-label='Quantity']");
+        var quantityInput = page.locator("[aria-label='Quantity']");
         quantityInput.fill("5");
 
-        Locator placeOrderButton = page.locator("[aria-label='Place Order']");
+        var placeOrderButton = page.locator("[aria-label='Place Order']");
         placeOrderButton.click();
 
         // Wait for confirmation message to appear
-        Locator confirmationMessage = page.locator("[role='alert']");
+        var confirmationMessage = page.locator("[role='alert']");
         confirmationMessage.waitFor(new Locator.WaitForOptions().setTimeout(TestConfiguration.getWaitSeconds() * 1000));
 
-        String confirmationMessageText = confirmationMessage.textContent();
+        var confirmationMessageText = confirmationMessage.textContent();
 
-        Pattern pattern = Pattern.compile("Success! Order has been created with Order Number ([\\w-]+) and Total Price \\$(\\d+(?:\\.\\d{2})?)");
+        var pattern = Pattern.compile("Success! Order has been created with Order Number ([\\w-]+) and Total Price \\$(\\d+(?:\\.\\d{2})?)");
         var matcher = pattern.matcher(confirmationMessageText);
 
         assertTrue(matcher.find(), "Confirmation message should match expected pattern. Actual: " + confirmationMessageText);
 
-        String totalPriceString = matcher.group(2);
-        double totalPrice = Double.parseDouble(totalPriceString);
+        var totalPriceString = matcher.group(2);
+        var totalPrice = Double.parseDouble(totalPriceString);
         assertTrue(totalPrice > 0, "Total price should be positive. Actual: " + totalPrice);
     }
 }

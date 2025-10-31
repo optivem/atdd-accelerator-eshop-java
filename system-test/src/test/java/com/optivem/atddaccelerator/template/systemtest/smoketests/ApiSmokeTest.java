@@ -16,13 +16,13 @@ public class ApiSmokeTest {
         // which unfortunately simulates real-life software test projects.
         // This is the starting point for our ATDD Accelerator exercises.
 
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
+        var client = HttpClient.newHttpClient();
+        var request = HttpRequest.newBuilder()
                 .uri(new URI("http://localhost:8080/api/echo"))
                 .GET()
                 .build();
 
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        var response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         assertEquals(200, response.statusCode());
     }

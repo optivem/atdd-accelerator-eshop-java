@@ -24,27 +24,27 @@ class ApiE2eTest {
     @Test
     void placeOrder_shouldReturnOrderNumber() throws Exception {
         // Arrange
-        PlaceOrderRequest requestDto = new PlaceOrderRequest();
+        var requestDto = new PlaceOrderRequest();
         requestDto.setSku("1001");
         requestDto.setQuantity(5);
         
-        String requestBody = objectMapper.writeValueAsString(requestDto);
+        var requestBody = objectMapper.writeValueAsString(requestDto);
         
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
+        var client = HttpClient.newHttpClient();
+        var request = HttpRequest.newBuilder()
                 .uri(new URI(BASE_URL + "/api/shop/order"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
 
         // Act
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        var response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         // Assert
         assertEquals(200, response.statusCode(), "Response status should be 200 OK");
         
-        String responseBody = response.body();
-        PlaceOrderResponse responseDto = objectMapper.readValue(responseBody, PlaceOrderResponse.class);
+        var responseBody = response.body();
+        var responseDto = objectMapper.readValue(responseBody, PlaceOrderResponse.class);
         
         // Verify response contains orderNumber
         assertNotNull(responseDto.getOrderNumber(), "Order number should not be null");
@@ -55,47 +55,47 @@ class ApiE2eTest {
     @Test
     void getOrder_shouldReturnOrderDetails() throws Exception {
         // Arrange - First place an order
-        PlaceOrderRequest placeOrderRequest = new PlaceOrderRequest();
+        var placeOrderRequest = new PlaceOrderRequest();
         placeOrderRequest.setSku("2001");
         placeOrderRequest.setQuantity(3);
         
-        String requestBody = objectMapper.writeValueAsString(placeOrderRequest);
+        var requestBody = objectMapper.writeValueAsString(placeOrderRequest);
         
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest postRequest = HttpRequest.newBuilder()
+        var client = HttpClient.newHttpClient();
+        var postRequest = HttpRequest.newBuilder()
                 .uri(new URI(BASE_URL + "/api/shop/order"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
 
-        HttpResponse<String> postResponse = client.send(postRequest, HttpResponse.BodyHandlers.ofString());
-        PlaceOrderResponse placeOrderResponse = objectMapper.readValue(postResponse.body(), PlaceOrderResponse.class);
-        String orderNumber = placeOrderResponse.getOrderNumber();
+        var postResponse = client.send(postRequest, HttpResponse.BodyHandlers.ofString());
+        var placeOrderResponse = objectMapper.readValue(postResponse.body(), PlaceOrderResponse.class);
+        var orderNumber = placeOrderResponse.getOrderNumber();
         
         // Act - Get the order details
-        HttpRequest getRequest = HttpRequest.newBuilder()
+        var getRequest = HttpRequest.newBuilder()
                 .uri(new URI(BASE_URL + "/api/shop/order/" + orderNumber))
                 .GET()
                 .build();
 
-        HttpResponse<String> getResponse = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
+        var getResponse = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
 
         // Assert
         assertEquals(200, getResponse.statusCode(), "Response status should be 200 OK");
         
-        GetOrderResponse getOrderResponse = objectMapper.readValue(getResponse.body(), GetOrderResponse.class);
+        var getOrderResponse = objectMapper.readValue(getResponse.body(), GetOrderResponse.class);
         
         assertEquals(orderNumber, getOrderResponse.getOrderNumber(), "Order number should match");
         assertEquals(2001L, getOrderResponse.getProductId(), "Product ID should be 2001");
         assertEquals(3, getOrderResponse.getQuantity(), "Quantity should be 3");
         
         // Expected unit price: 2001 / 1000 = 2.00 (rounded)
-        BigDecimal expectedUnitPrice = new BigDecimal("2.00");
+        var expectedUnitPrice = new BigDecimal("2.00");
         assertEquals(0, expectedUnitPrice.compareTo(getOrderResponse.getUnitPrice()), 
                 "Unit price should be 2.00, but was: " + getOrderResponse.getUnitPrice());
         
         // Expected total price: 2.00 * 3 = 6.00
-        BigDecimal expectedTotalPrice = new BigDecimal("6.00");
+        var expectedTotalPrice = new BigDecimal("6.00");
         assertEquals(0, expectedTotalPrice.compareTo(getOrderResponse.getTotalPrice()), 
                 "Total price should be 6.00, but was: " + getOrderResponse.getTotalPrice());
     }
