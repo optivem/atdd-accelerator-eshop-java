@@ -1,27 +1,32 @@
 package com.optivem.atddaccelerator.template.monolith.common;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@Component
 public class PriceCalculator {
-    public static double calculatePrice(String sku, int quantity) {
-        var price = getPrice(sku);
+    
+    @Value("${erp.url}")
+    private String erpUrl;
+    
+    public double calculatePrice(long productId, int quantity) {
+        var price = getPrice(productId);
         return price * quantity;
     }
 
-    private static double getPrice(String sku) {
-        // TODO: VJ: Replace with actual ERP integration
-        // For testing purposes, use hardcoded prices
-        return switch (sku) {
-            case "ABC", "ABC1001" -> 2.50;
-            case "DEF" -> 5.00;
-            case "GHI" -> 10.00;
-            default -> 1.00;
-        };
-        
-        /* Original ERP integration code - uncomment when ERP is available
+    private double getPrice(long productId) {
         try {
-            var erpUrl = System.getenv("ERP_URL");
             System.out.println("Going to contact: " + erpUrl);
 
-            var url = erpUrl + "/products/" + sku;
+            var url = erpUrl + "/products/" + productId;
             HttpClient client = HttpClient.newHttpClient();
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
@@ -31,8 +36,11 @@ public class PriceCalculator {
             JsonNode node = mapper.readTree(response.body());
             return node.get("price").asDouble();
         } catch (Exception e) {
+            System.err.println("ERROR: Failed to fetch price for productId: " + productId);
+            System.err.println("ERROR: erp.url: " + erpUrl);
+            System.err.println("ERROR: Exception message: " + e.getMessage());
+            e.printStackTrace();
             throw new RuntimeException("Failed to fetch price", e);
         }
-        */
     }
 }

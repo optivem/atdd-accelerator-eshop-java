@@ -45,8 +45,8 @@ class UiE2eTest {
         // Act
         page.navigate(baseUrl + "/shop.html");
 
-        Locator skuInput = page.locator("[aria-label='SKU']");
-        skuInput.fill("ABC1001");
+        Locator productIdInput = page.locator("[aria-label='Product ID']");
+        productIdInput.fill("1001");
 
         Locator quantityInput = page.locator("[aria-label='Quantity']");
         quantityInput.fill("5");
