@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class PlaceOrderRequest {
-    private String sku;
+    private long productId;
     private int quantity;
 }

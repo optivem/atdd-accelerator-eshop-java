@@ -22,9 +22,8 @@ public class OrderService {
 
     public PlaceOrderResponse placeOrder(PlaceOrderRequest request) {
         var orderNumber = orderRepository.nextOrderNumber();
-        var sku = request.getSku();
+        var productId = request.getProductId();
         var quantity = request.getQuantity();
-        var productId = Long.parseLong(sku);
         BigDecimal unitPrice = erpGateway.getUnitPrice(productId);
         BigDecimal totalPrice = unitPrice.multiply(BigDecimal.valueOf(quantity));
         var order = new Order(orderNumber, productId, quantity, unitPrice, totalPrice);

@@ -15,9 +15,9 @@ public class ShopMvcController {
     }
     
     @PostMapping("/shop")
-    public PlaceOrderResponse placeOrder(@RequestParam String sku, @RequestParam int quantity) {
+    public PlaceOrderResponse placeOrder(@RequestParam long productId, @RequestParam int quantity) {
         var request = new PlaceOrderRequest();
-        request.setSku(sku);
+        request.setProductId(productId);
         request.setQuantity(quantity);
 
         return orderService.placeOrder(request);

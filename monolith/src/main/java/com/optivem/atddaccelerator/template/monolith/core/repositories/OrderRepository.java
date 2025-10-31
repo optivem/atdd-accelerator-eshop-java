@@ -21,6 +21,6 @@ public class OrderRepository {
     }
 
     public String nextOrderNumber() {
-        return "ORD-" + UUID.randomUUID().toString();
+        return "ORD-" + UUID.randomUUID();
     }
 }
