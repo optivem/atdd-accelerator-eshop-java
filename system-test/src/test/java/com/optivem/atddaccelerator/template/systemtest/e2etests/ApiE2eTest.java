@@ -32,7 +32,7 @@ class ApiE2eTest {
         
         var client = HttpClient.newHttpClient();
         var request = HttpRequest.newBuilder()
-                .uri(new URI(BASE_URL + "/api/shop/order"))
+                .uri(new URI(BASE_URL + "/api/orders"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
@@ -63,7 +63,7 @@ class ApiE2eTest {
         
         var client = HttpClient.newHttpClient();
         var postRequest = HttpRequest.newBuilder()
-                .uri(new URI(BASE_URL + "/api/shop/order"))
+                .uri(new URI(BASE_URL + "/api/orders"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
@@ -74,7 +74,7 @@ class ApiE2eTest {
         
         // Act - Get the order details
         var getRequest = HttpRequest.newBuilder()
-                .uri(new URI(BASE_URL + "/api/shop/order/" + orderNumber))
+                .uri(new URI(BASE_URL + "/api/orders/" + orderNumber))
                 .GET()
                 .build();
 
