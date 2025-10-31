@@ -40,7 +40,7 @@ class ApiE2eTest {
     void placeOrder_shouldReturnOrderNumber() throws Exception {
         // Arrange
         var requestDto = new PlaceOrderRequest();
-        requestDto.setSku("1001");
+        requestDto.setProductId(10);
         requestDto.setQuantity(5);
         
         var requestBody = objectMapper.writeValueAsString(requestDto);
@@ -65,12 +65,12 @@ class ApiE2eTest {
         assertTrue(responseDto.getOrderNumber().startsWith("ORD-"), "Order number should start with ORD-");
     }
 
-    @Disabled("Disabled until getOrder API is implemented")
+        @Disabled("Disabled until getOrder API is implemented")
     @Test
     void getOrder_shouldReturnOrderDetails() throws Exception {
         // Arrange - First place an order
         var placeOrderRequest = new PlaceOrderRequest();
-        placeOrderRequest.setSku("2001");
+        placeOrderRequest.setProductId(11);
         placeOrderRequest.setQuantity(3);
         
         var requestBody = objectMapper.writeValueAsString(placeOrderRequest);
@@ -99,23 +99,17 @@ class ApiE2eTest {
         var getOrderResponse = objectMapper.readValue(getResponse.body(), GetOrderResponse.class);
         
         assertEquals(orderNumber, getOrderResponse.getOrderNumber(), "Order number should match");
-        assertEquals(2001L, getOrderResponse.getProductId(), "Product ID should be 2001");
+        assertEquals(11L, getOrderResponse.getProductId(), "Product ID should be 11");
         assertEquals(3, getOrderResponse.getQuantity(), "Quantity should be 3");
         
-        // Expected unit price: 2001 / 1000 = 2.00 (rounded)
-        var expectedUnitPrice = new BigDecimal("2.00");
-        assertEquals(0, expectedUnitPrice.compareTo(getOrderResponse.getUnitPrice()), 
-                "Unit price should be 2.00, but was: " + getOrderResponse.getUnitPrice());
-        
-        // Expected total price: 2.00 * 3 = 6.00
-        var expectedTotalPrice = new BigDecimal("6.00");
-        assertEquals(0, expectedTotalPrice.compareTo(getOrderResponse.getTotalPrice()), 
-                "Total price should be 6.00, but was: " + getOrderResponse.getTotalPrice());
+        // Price will come from DummyJSON API for product 11
+        assertNotNull(getOrderResponse.getUnitPrice(), "Unit price should not be null");
+        assertNotNull(getOrderResponse.getTotalPrice(), "Total price should not be null");
     }
     
     @Data
     static class PlaceOrderRequest {
-        private String sku;
+        private long productId;
         private int quantity;
     }
     

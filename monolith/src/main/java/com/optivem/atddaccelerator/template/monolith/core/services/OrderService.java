@@ -22,9 +22,17 @@ public class OrderService {
     }
 
     public PlaceOrderResponse placeOrder(PlaceOrderRequest request) {
-        var orderNumber = orderRepository.nextOrderNumber();
         var productId = request.getProductId();
         var quantity = request.getQuantity();
+        
+        if (productId <= 0) {
+            throw new IllegalArgumentException("Product ID must be greater than 0, received: " + productId);
+        }
+        if (quantity <= 0) {
+            throw new IllegalArgumentException("Quantity must be greater than 0, received: " + quantity);
+        }
+        
+        var orderNumber = orderRepository.nextOrderNumber();
         var unitPrice = erpGateway.getUnitPrice(productId);
         var totalPrice = unitPrice.multiply(BigDecimal.valueOf(quantity));
         var order = new Order(orderNumber, productId, quantity, unitPrice, totalPrice);

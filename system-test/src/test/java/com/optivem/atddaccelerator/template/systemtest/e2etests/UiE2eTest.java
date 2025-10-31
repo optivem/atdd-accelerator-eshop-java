@@ -44,7 +44,7 @@ class UiE2eTest {
         page.navigate(baseUrl + "/shop.html");
 
         var productIdInput = page.locator("[aria-label='Product ID']");
-        productIdInput.fill("1001");
+        productIdInput.fill("10");
 
         var quantityInput = page.locator("[aria-label='Quantity']");
         quantityInput.fill("5");

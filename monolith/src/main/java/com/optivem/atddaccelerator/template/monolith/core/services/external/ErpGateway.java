@@ -29,6 +29,10 @@ public class ErpGateway {
                     .build();
             var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
+            if (response.statusCode() != 200) {
+                throw new RuntimeException("ERP API returned status " + response.statusCode() + " for product: " + productId);
+            }
+
             var productPriceResponse = OBJECT_MAPPER.readValue(response.body(), ProductPriceResponse.class);
 
             return productPriceResponse.getPrice();

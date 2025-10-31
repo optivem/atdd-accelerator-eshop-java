@@ -12,6 +12,16 @@ public class Order {
     private BigDecimal totalPrice;
 
     public Order(String orderNumber, long productId, int quantity, BigDecimal unitPrice, BigDecimal totalPrice) {
+        if (orderNumber == null) {
+            throw new IllegalArgumentException("orderNumber cannot be null");
+        }
+        if (unitPrice == null) {
+            throw new IllegalArgumentException("unitPrice cannot be null");
+        }
+        if (totalPrice == null) {
+            throw new IllegalArgumentException("totalPrice cannot be null");
+        }
+        
         this.orderNumber = orderNumber;
         this.productId = productId;
         this.quantity = quantity;
