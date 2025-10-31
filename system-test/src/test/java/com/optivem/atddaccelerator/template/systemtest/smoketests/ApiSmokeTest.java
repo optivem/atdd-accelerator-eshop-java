@@ -8,7 +8,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-class ApiSmokeTest {
+public class ApiSmokeTest {
 
     @Test
     void echo_shouldReturn200OK() throws Exception {
