@@ -29,3 +29,7 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+springBoot {
+	mainClass = 'com.optivem.atddaccelerator.template.monolith.EshopApplication'
+}
