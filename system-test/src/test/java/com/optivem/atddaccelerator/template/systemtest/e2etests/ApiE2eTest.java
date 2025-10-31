@@ -65,7 +65,6 @@ class ApiE2eTest {
         assertTrue(responseDto.getOrderNumber().startsWith("ORD-"), "Order number should start with ORD-");
     }
 
-        @Disabled("Disabled until getOrder API is implemented")
     @Test
     void getOrder_shouldReturnOrderDetails() throws Exception {
         // Arrange - First place an order
