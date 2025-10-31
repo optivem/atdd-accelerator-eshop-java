@@ -6,7 +6,6 @@ import lombok.Data;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -105,6 +104,49 @@ class ApiE2eTest {
         assertNotNull(getOrderResponse.getUnitPrice(), "Unit price should not be null");
         assertNotNull(getOrderResponse.getTotalPrice(), "Total price should not be null");
     }
+
+    @Test
+    void cancelOrder_shouldSetStatusToCancelled() throws Exception {
+        // Arrange - First place an order
+        var placeOrderRequest = new PlaceOrderRequest();
+        placeOrderRequest.setProductId(12);
+        placeOrderRequest.setQuantity(2);
+        
+        var requestBody = objectMapper.writeValueAsString(placeOrderRequest);
+        
+        var postRequest = HttpRequest.newBuilder()
+                .uri(new URI(BASE_URL + "/api/orders"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
+
+        var postResponse = httpClient.send(postRequest, HttpResponse.BodyHandlers.ofString());
+        var placeOrderResponse = objectMapper.readValue(postResponse.body(), PlaceOrderResponse.class);
+        var orderNumber = placeOrderResponse.getOrderNumber();
+        
+        // Act - Cancel the order
+        var deleteRequest = HttpRequest.newBuilder()
+                .uri(new URI(BASE_URL + "/api/orders/" + orderNumber))
+                .DELETE()
+                .build();
+
+        var deleteResponse = httpClient.send(deleteRequest, HttpResponse.BodyHandlers.ofString());
+
+        // Assert - Verify cancel response
+        assertEquals(204, deleteResponse.statusCode(), "Response status should be 204 No Content");
+        
+        // Verify order status is CANCELLED
+        var getRequest = HttpRequest.newBuilder()
+                .uri(new URI(BASE_URL + "/api/orders/" + orderNumber))
+                .GET()
+                .build();
+
+        var getResponse = httpClient.send(getRequest, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, getResponse.statusCode(), "Response status should be 200 OK");
+        
+        var getOrderResponse = objectMapper.readValue(getResponse.body(), GetOrderResponse.class);
+        assertEquals("CANCELLED", getOrderResponse.getStatus(), "Order status should be CANCELLED");
+    }
     
     @Data
     static class PlaceOrderRequest {
@@ -125,5 +167,6 @@ class ApiE2eTest {
         private int quantity;
         private BigDecimal unitPrice;
         private BigDecimal totalPrice;
+        private String status;
     }
 }

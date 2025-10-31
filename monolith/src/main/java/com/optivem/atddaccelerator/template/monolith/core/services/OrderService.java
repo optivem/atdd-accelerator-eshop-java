@@ -54,7 +54,14 @@ public class OrderService {
         response.setQuantity(order.getQuantity());
         response.setUnitPrice(order.getUnitPrice());
         response.setTotalPrice(order.getTotalPrice());
+        response.setStatus(order.getStatus());
 
         return response;
+    }
+
+    public void cancelOrder(String orderNumber) {
+        var order = orderRepository.getOrder(orderNumber);
+        order.setStatus(com.optivem.atddaccelerator.template.monolith.core.entities.OrderStatus.CANCELLED);
+        orderRepository.saveOrder(order);
     }
 }

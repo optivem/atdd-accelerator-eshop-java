@@ -10,6 +10,7 @@ public class Order {
     private int quantity;
     private BigDecimal unitPrice;
     private BigDecimal totalPrice;
+    private OrderStatus status;
 
     public Order(String orderNumber, long productId, int quantity, BigDecimal unitPrice, BigDecimal totalPrice) {
         if (orderNumber == null) {
@@ -27,5 +28,6 @@ public class Order {
         this.quantity = quantity;
         this.unitPrice = unitPrice;
         this.totalPrice = totalPrice;
+        this.status = OrderStatus.PLACED;
     }
 }

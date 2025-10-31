@@ -27,4 +27,10 @@ public class OrderController {
         var response = orderService.getOrder(orderNumber);
         return ResponseEntity.ok(response);
     }
+
+    @DeleteMapping("/api/orders/{orderNumber}")
+    public ResponseEntity<Void> cancelOrder(@PathVariable String orderNumber) {
+        orderService.cancelOrder(orderNumber);
+        return ResponseEntity.noContent().build();
+    }
 }
