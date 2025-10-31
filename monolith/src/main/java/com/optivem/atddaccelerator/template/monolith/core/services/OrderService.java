@@ -1,7 +1,7 @@
 package com.optivem.atddaccelerator.template.monolith.core.services;
 
 import com.optivem.atddaccelerator.template.monolith.core.entities.Order;
-import com.optivem.atddaccelerator.template.monolith.core.repositories.OrderStorage;
+import com.optivem.atddaccelerator.template.monolith.core.repositories.OrderRepository;
 import com.optivem.atddaccelerator.template.monolith.core.dtos.GetOrderResponse;
 import com.optivem.atddaccelerator.template.monolith.core.dtos.PlaceOrderRequest;
 import com.optivem.atddaccelerator.template.monolith.core.dtos.PlaceOrderResponse;
@@ -12,14 +12,16 @@ import java.math.BigDecimal;
 @Service
 public class OrderService {
 
+    private final OrderRepository orderRepository;
     private final ErpGateway erpGateway;
 
-    public OrderService(ErpGateway erpGateway) {
+    public OrderService(OrderRepository orderRepository, ErpGateway erpGateway) {
+        this.orderRepository = orderRepository;
         this.erpGateway = erpGateway;
     }
 
     public PlaceOrderResponse placeOrder(PlaceOrderRequest request) {
-        var orderNumber = OrderStorage.nextOrderNumber();
+        var orderNumber = orderRepository.nextOrderNumber();
         var sku = request.getSku();
         var quantity = request.getQuantity();
         var productId = Long.parseLong(sku);
@@ -27,7 +29,7 @@ public class OrderService {
         BigDecimal totalPrice = unitPrice.multiply(BigDecimal.valueOf(quantity));
         var order = new Order(orderNumber, productId, quantity, unitPrice, totalPrice);
 
-        OrderStorage.saveOrder(order);
+        orderRepository.saveOrder(order);
 
         var response = new PlaceOrderResponse();
         response.setOrderNumber(orderNumber);
@@ -36,7 +38,7 @@ public class OrderService {
     }
 
     public GetOrderResponse getOrder(String orderNumber) {
-        var order = OrderStorage.getOrder(orderNumber);
+        var order = orderRepository.getOrder(orderNumber);
 
         var response = new GetOrderResponse();
         response.setOrderNumber(orderNumber);

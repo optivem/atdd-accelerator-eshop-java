@@ -1,23 +1,26 @@
 package com.optivem.atddaccelerator.template.monolith.core.repositories;
 
 import com.optivem.atddaccelerator.template.monolith.core.entities.Order;
+import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.UUID;
 
-public class OrderStorage {
+@Repository
+public class OrderRepository {
     // TODO: VJ: Replace with actual database
     private static final HashMap<String, Order> orders = new HashMap<>();
 
-    public static void saveOrder(Order order) {
+    public void saveOrder(Order order) {
         orders.put(order.getOrderNumber(), order);
     }
 
-    public static Order getOrder(String orderNumber) {
+    public Order getOrder(String orderNumber) {
         return orders.get(orderNumber);
     }
 
-    public static String nextOrderNumber() {
+    public String nextOrderNumber() {
         return "ORD-" + UUID.randomUUID().toString();
     }
 }
