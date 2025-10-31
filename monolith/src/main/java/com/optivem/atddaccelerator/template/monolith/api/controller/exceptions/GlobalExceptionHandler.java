@@ -1,4 +1,4 @@
-package com.optivem.atddaccelerator.template.monolith.api.controller;
+package com.optivem.atddaccelerator.template.monolith.api.controller.exceptions;
 
 import com.optivem.atddaccelerator.template.monolith.core.exceptions.ValidationException;
 import org.springframework.http.HttpStatus;

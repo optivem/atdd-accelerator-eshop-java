@@ -10,7 +10,19 @@ import java.util.UUID;
 public class OrderRepository {
     private static final HashMap<String, Order> orders = new HashMap<>();
 
-    public void saveOrder(Order order) {
+    public void addOrder(Order order) {
+        if(orders.containsKey(order.getOrderNumber())) {
+            throw new IllegalArgumentException("Order with order number " + order.getOrderNumber() + " already exists.");
+        }
+
+        orders.put(order.getOrderNumber(), order);
+    }
+
+    public void updateOrder(Order order) {
+        if(!orders.containsKey(order.getOrderNumber())) {
+            throw new IllegalArgumentException("Order with order number " + order.getOrderNumber() + " does not exist.");
+        }
+
         orders.put(order.getOrderNumber(), order);
     }
 

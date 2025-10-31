@@ -46,7 +46,7 @@ public class OrderService {
         var totalPrice = unitPrice.multiply(BigDecimal.valueOf(quantity));
         var order = new Order(orderNumber, productId, quantity, unitPrice, totalPrice, OrderStatus.PLACED);
 
-        orderRepository.saveOrder(order);
+        orderRepository.addOrder(order);
 
         var response = new PlaceOrderResponse();
         response.setOrderNumber(orderNumber);
@@ -81,6 +81,6 @@ public class OrderService {
         
         var order = orderRepository.getOrder(orderNumber);
         order.setStatus(OrderStatus.CANCELLED);
-        orderRepository.saveOrder(order);
+        orderRepository.updateOrder(order);
     }
 }
