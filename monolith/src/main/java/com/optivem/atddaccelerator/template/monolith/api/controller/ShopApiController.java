@@ -24,8 +24,9 @@ public class ShopApiController {
         var sku = request.getSku();
         var quantity = request.getQuantity();
         var productId = Long.parseLong(sku);
-        BigDecimal totalPrice = priceCalculator.calculatePrice(productId, quantity);
-        var order = new Order(orderNumber, productId, quantity, totalPrice);
+        BigDecimal unitPrice = priceCalculator.getUnitPrice(productId);
+        BigDecimal totalPrice = priceCalculator.calculateTotalPrice(unitPrice, quantity);
+        var order = new Order(orderNumber, productId, quantity, unitPrice, totalPrice);
 
         OrderStorage.saveOrder(order);
 
@@ -43,6 +44,7 @@ public class ShopApiController {
         response.setOrderNumber(orderNumber);
         response.setProductId(order.getProductId());
         response.setQuantity(order.getQuantity());
+        response.setUnitPrice(order.getUnitPrice());
         response.setTotalPrice(order.getTotalPrice());
 
         return ResponseEntity.ok(response);
@@ -64,6 +66,7 @@ public class ShopApiController {
         private String orderNumber;
         private long productId;
         private int quantity;
+        private BigDecimal unitPrice;
         private BigDecimal totalPrice;
     }
 }

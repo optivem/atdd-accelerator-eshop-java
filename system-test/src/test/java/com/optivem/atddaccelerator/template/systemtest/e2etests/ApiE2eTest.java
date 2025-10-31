@@ -89,9 +89,14 @@ class ApiE2eTest {
         assertEquals(2001L, getOrderResponse.getProductId(), "Product ID should be 2001");
         assertEquals(3, getOrderResponse.getQuantity(), "Quantity should be 3");
         
-        // Expected price: 2001 / 1000 * 3 = 6.003
-        BigDecimal expectedPrice = new BigDecimal("6.00");
-        assertEquals(0, expectedPrice.compareTo(getOrderResponse.getTotalPrice()), 
+        // Expected unit price: 2001 / 1000 = 2.00 (rounded)
+        BigDecimal expectedUnitPrice = new BigDecimal("2.00");
+        assertEquals(0, expectedUnitPrice.compareTo(getOrderResponse.getUnitPrice()), 
+                "Unit price should be 2.00, but was: " + getOrderResponse.getUnitPrice());
+        
+        // Expected total price: 2.00 * 3 = 6.00
+        BigDecimal expectedTotalPrice = new BigDecimal("6.00");
+        assertEquals(0, expectedTotalPrice.compareTo(getOrderResponse.getTotalPrice()), 
                 "Total price should be 6.00, but was: " + getOrderResponse.getTotalPrice());
     }
     
@@ -111,6 +116,7 @@ class ApiE2eTest {
         private String orderNumber;
         private long productId;
         private int quantity;
+        private BigDecimal unitPrice;
         private BigDecimal totalPrice;
     }
 }

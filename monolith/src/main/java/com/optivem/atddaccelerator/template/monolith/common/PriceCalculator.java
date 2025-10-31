@@ -19,12 +19,7 @@ public class PriceCalculator {
     @Value("${erp.url}")
     private String erpUrl;
     
-    public BigDecimal calculatePrice(long productId, int quantity) {
-        BigDecimal price = getPrice(productId);
-        return price.multiply(BigDecimal.valueOf(quantity));
-    }
-
-    private BigDecimal getPrice(long productId) {
+    public BigDecimal getUnitPrice(long productId) {
         try {
             System.out.println("Going to contact: " + erpUrl);
 
@@ -40,5 +35,9 @@ public class PriceCalculator {
         } catch (Exception e) {
             throw new RuntimeException("Failed to fetch price", e);
         }
+    }
+    
+    public BigDecimal calculateTotalPrice(BigDecimal unitPrice, int quantity) {
+        return unitPrice.multiply(BigDecimal.valueOf(quantity));
     }
 }

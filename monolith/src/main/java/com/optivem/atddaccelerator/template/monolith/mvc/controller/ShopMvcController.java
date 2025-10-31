@@ -20,8 +20,9 @@ public class ShopMvcController {
     public Order placeOrder(@RequestParam String sku, @RequestParam int quantity) {
         var orderNumber = OrderStorage.nextOrderNumber();
         var productId = Long.parseLong(sku);
-        BigDecimal totalPrice = priceCalculator.calculatePrice(productId, quantity);
-        var order = new Order(orderNumber, productId, quantity, totalPrice);
+        BigDecimal unitPrice = priceCalculator.getUnitPrice(productId);
+        BigDecimal totalPrice = priceCalculator.calculateTotalPrice(unitPrice, quantity);
+        var order = new Order(orderNumber, productId, quantity, unitPrice, totalPrice);
         OrderStorage.saveOrder(order);
         
         return order;
