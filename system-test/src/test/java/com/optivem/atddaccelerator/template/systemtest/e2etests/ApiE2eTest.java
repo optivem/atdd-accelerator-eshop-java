@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.optivem.atddaccelerator.template.systemtest.TestConfiguration;
 import lombok.Data;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -20,7 +22,19 @@ class ApiE2eTest {
 
     private static final String BASE_URL = "http://localhost:" + TestConfiguration.getServerPort();
     private static final ObjectMapper objectMapper = new ObjectMapper();
-    private static final HttpClient httpClient = HttpClient.newHttpClient();
+    private HttpClient httpClient;
+
+    @BeforeEach
+    void setUp() {
+        httpClient = HttpClient.newHttpClient();
+    }
+
+    @AfterEach
+    void tearDown() {
+        if (httpClient != null) {
+            httpClient.close();
+        }
+    }
 
     @Test
     void placeOrder_shouldReturnOrderNumber() throws Exception {

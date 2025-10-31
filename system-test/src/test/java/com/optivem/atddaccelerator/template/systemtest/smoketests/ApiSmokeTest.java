@@ -10,17 +10,17 @@ import java.net.http.HttpResponse;
 
 public class ApiSmokeTest {
 
-    private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
-
     @Test
     void echo_shouldReturn200OK() throws Exception {
-        var request = HttpRequest.newBuilder()
-                .uri(new URI("http://localhost:8080/api/echo"))
-                .GET()
-                .build();
+        try (var client = HttpClient.newHttpClient()) {
+            var request = HttpRequest.newBuilder()
+                    .uri(new URI("http://localhost:8080/api/echo"))
+                    .GET()
+                    .build();
 
-        var response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+            var response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        assertEquals(200, response.statusCode());
+            assertEquals(200, response.statusCode());
+        }
     }
 }
