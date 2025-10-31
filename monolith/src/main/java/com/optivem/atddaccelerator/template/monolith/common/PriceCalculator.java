@@ -36,10 +36,6 @@ public class PriceCalculator {
             JsonNode node = mapper.readTree(response.body());
             return node.get("price").asDouble();
         } catch (Exception e) {
-            System.err.println("ERROR: Failed to fetch price for productId: " + productId);
-            System.err.println("ERROR: erp.url: " + erpUrl);
-            System.err.println("ERROR: Exception message: " + e.getMessage());
-            e.printStackTrace();
             throw new RuntimeException("Failed to fetch price", e);
         }
     }
