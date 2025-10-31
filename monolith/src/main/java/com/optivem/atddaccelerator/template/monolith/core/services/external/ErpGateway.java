@@ -1,6 +1,8 @@
-package com.optivem.atddaccelerator.template.monolith.core.services;
+package com.optivem.atddaccelerator.template.monolith.core.services.external;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.optivem.atddaccelerator.template.monolith.core.dtos.external.ProductPriceResponse;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -19,19 +21,19 @@ public class ErpGateway {
 
     public BigDecimal getUnitPrice(long productId) {
         try {
-            System.out.println("Going to contact: " + erpUrl);
-
             var url = erpUrl + "/products/" + productId;
             var client = HttpClient.newHttpClient();
             var request = HttpRequest.newBuilder()
                     .uri(URI.create(url))
                     .build();
             var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            
             var mapper = new ObjectMapper();
-            var node = mapper.readTree(response.body());
-            return BigDecimal.valueOf(node.get("price").asDouble()).setScale(2, RoundingMode.HALF_UP);
+            var productPriceResponse = mapper.readValue(response.body(), ProductPriceResponse.class);
+            
+            return productPriceResponse.getPrice();
         } catch (Exception e) {
-            throw new RuntimeException("Failed to fetch price", e);
+            throw new RuntimeException("Failed to fetch price for product: " + productId, e);
         }
     }
 }
