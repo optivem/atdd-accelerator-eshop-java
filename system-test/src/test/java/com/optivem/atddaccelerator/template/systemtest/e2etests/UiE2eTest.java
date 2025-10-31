@@ -43,7 +43,7 @@ class UiE2eTest {
     @Test
     void shouldCalculateTotalOrderPrice() {
         // Act
-        page.navigate(baseUrl + "/shop");
+        page.navigate(baseUrl + "/shop.html");
 
         Locator skuInput = page.locator("[aria-label='SKU']");
         skuInput.fill("ABC1001");
