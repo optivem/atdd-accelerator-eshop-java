@@ -1,5 +1,7 @@
 package com.optivem.atddaccelerator.template.monolith.common;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -17,12 +19,12 @@ public class PriceCalculator {
     @Value("${erp.url}")
     private String erpUrl;
     
-    public double calculatePrice(long productId, int quantity) {
-        var price = getPrice(productId);
-        return price * quantity;
+    public BigDecimal calculatePrice(long productId, int quantity) {
+        BigDecimal price = getPrice(productId);
+        return price.multiply(BigDecimal.valueOf(quantity));
     }
 
-    private double getPrice(long productId) {
+    private BigDecimal getPrice(long productId) {
         try {
             System.out.println("Going to contact: " + erpUrl);
 
@@ -34,7 +36,7 @@ public class PriceCalculator {
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             ObjectMapper mapper = new ObjectMapper();
             JsonNode node = mapper.readTree(response.body());
-            return node.get("price").asDouble();
+            return BigDecimal.valueOf(node.get("price").asDouble()).setScale(2, RoundingMode.HALF_UP);
         } catch (Exception e) {
             throw new RuntimeException("Failed to fetch price", e);
         }

@@ -5,6 +5,8 @@ import com.optivem.atddaccelerator.template.monolith.common.OrderStorage;
 import com.optivem.atddaccelerator.template.monolith.common.PriceCalculator;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 @RestController
 public class ShopMvcController {
     
@@ -18,7 +20,7 @@ public class ShopMvcController {
     public Order placeOrder(@RequestParam String sku, @RequestParam int quantity) {
         var orderNumber = OrderStorage.nextOrderNumber();
         var productId = Long.parseLong(sku);
-        var totalPrice = priceCalculator.calculatePrice(productId, quantity);
+        BigDecimal totalPrice = priceCalculator.calculatePrice(productId, quantity);
         var order = new Order(orderNumber, productId, quantity, totalPrice);
         OrderStorage.saveOrder(order);
         

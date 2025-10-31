@@ -7,6 +7,8 @@ import lombok.Data;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 @RestController
 public class ShopApiController {
 
@@ -22,7 +24,7 @@ public class ShopApiController {
         var sku = request.getSku();
         var quantity = request.getQuantity();
         var productId = Long.parseLong(sku);
-        var totalPrice = priceCalculator.calculatePrice(productId, quantity);
+        BigDecimal totalPrice = priceCalculator.calculatePrice(productId, quantity);
         var order = new Order(orderNumber, productId, quantity, totalPrice);
 
         OrderStorage.saveOrder(order);
@@ -36,11 +38,12 @@ public class ShopApiController {
     @GetMapping("/api/shop/order/{orderNumber}")
     public ResponseEntity<GetOrderResponse> getOrder(@PathVariable String orderNumber) {
         var order = OrderStorage.getOrder(orderNumber);
-        var totalPrice = order.getTotalPrice();
 
         var response = new GetOrderResponse();
         response.setOrderNumber(orderNumber);
-        response.setTotalPrice(totalPrice);
+        response.setProductId(order.getProductId());
+        response.setQuantity(order.getQuantity());
+        response.setTotalPrice(order.getTotalPrice());
 
         return ResponseEntity.ok(response);
     }
@@ -59,6 +62,8 @@ public class ShopApiController {
     @Data
     public static class GetOrderResponse {
         private String orderNumber;
-        private double totalPrice;
+        private long productId;
+        private int quantity;
+        private BigDecimal totalPrice;
     }
 }
