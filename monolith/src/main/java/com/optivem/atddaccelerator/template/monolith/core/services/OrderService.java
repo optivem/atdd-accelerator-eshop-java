@@ -11,11 +11,14 @@ import com.optivem.atddaccelerator.template.monolith.core.dtos.PlaceOrderRespons
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.MonthDay;
 
 @Service
 public class OrderService {
 
+    public static final MonthDay DECEMBER_31 = MonthDay.of(12, 31);
     private static final LocalTime CANCELLATION_BLOCK_START = LocalTime.of(22, 0);
     private static final LocalTime CANCELLATION_BLOCK_END = LocalTime.of(23, 0);
 
@@ -66,10 +69,14 @@ public class OrderService {
     }
 
     public void cancelOrder(String orderNumber) {
-        var currentTime = LocalTime.now();
+        var now = LocalDateTime.now();
+        var currentDate = MonthDay.from(now);
+        var currentTime = now.toLocalTime();
 
-        if (!currentTime.isBefore(CANCELLATION_BLOCK_START) && currentTime.isBefore(CANCELLATION_BLOCK_END)) {
-            throw new ValidationException("Order cancellation is not allowed between 10:00 and 11:00");
+        if (currentDate.equals(DECEMBER_31) &&
+            currentTime.isAfter(CANCELLATION_BLOCK_START) && 
+            currentTime.isBefore(CANCELLATION_BLOCK_END)) {
+            throw new ValidationException("Order cancellation is not allowed on December 31st between 22:00 and 23:00");
         }
         
         var order = orderRepository.getOrder(orderNumber);
