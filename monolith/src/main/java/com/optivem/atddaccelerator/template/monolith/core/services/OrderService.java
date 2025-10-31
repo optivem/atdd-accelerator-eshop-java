@@ -2,7 +2,7 @@ package com.optivem.atddaccelerator.template.monolith.core.services;
 
 import com.optivem.atddaccelerator.template.monolith.core.entities.Order;
 import com.optivem.atddaccelerator.template.monolith.core.entities.OrderStatus;
-import com.optivem.atddaccelerator.template.monolith.core.exceptions.OrderCancellationNotAllowedException;
+import com.optivem.atddaccelerator.template.monolith.core.exceptions.ValidationException;
 import com.optivem.atddaccelerator.template.monolith.core.repositories.OrderRepository;
 import com.optivem.atddaccelerator.template.monolith.core.services.external.ErpGateway;
 import com.optivem.atddaccelerator.template.monolith.core.dtos.GetOrderResponse;
@@ -15,6 +15,9 @@ import java.time.LocalTime;
 
 @Service
 public class OrderService {
+
+    private static final LocalTime CANCELLATION_BLOCK_START = LocalTime.of(22, 0);
+    private static final LocalTime CANCELLATION_BLOCK_END = LocalTime.of(23, 0);
 
     private final OrderRepository orderRepository;
     private final ErpGateway erpGateway;
@@ -29,10 +32,10 @@ public class OrderService {
         var quantity = request.getQuantity();
         
         if (productId <= 0) {
-            throw new IllegalArgumentException("Product ID must be greater than 0, received: " + productId);
+            throw new ValidationException("Product ID must be greater than 0, received: " + productId);
         }
         if (quantity <= 0) {
-            throw new IllegalArgumentException("Quantity must be greater than 0, received: " + quantity);
+            throw new ValidationException("Quantity must be greater than 0, received: " + quantity);
         }
         
         var orderNumber = orderRepository.nextOrderNumber();
@@ -64,11 +67,9 @@ public class OrderService {
 
     public void cancelOrder(String orderNumber) {
         var currentTime = LocalTime.now();
-        var cancellationBlockStart = LocalTime.of(10, 0);
-        var cancellationBlockEnd = LocalTime.of(11, 0);
-        
-        if (!currentTime.isBefore(cancellationBlockStart) && currentTime.isBefore(cancellationBlockEnd)) {
-            throw new OrderCancellationNotAllowedException("Order cancellation is not allowed between 10:00 and 11:00");
+
+        if (!currentTime.isBefore(CANCELLATION_BLOCK_START) && currentTime.isBefore(CANCELLATION_BLOCK_END)) {
+            throw new ValidationException("Order cancellation is not allowed between 10:00 and 11:00");
         }
         
         var order = orderRepository.getOrder(orderNumber);
