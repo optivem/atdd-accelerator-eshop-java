@@ -1,5 +1,5 @@
 test:
-  server:
-    port: 8080
+  eshop:
+    baseUrl: http://localhost:8080
   wait:
     seconds: 10

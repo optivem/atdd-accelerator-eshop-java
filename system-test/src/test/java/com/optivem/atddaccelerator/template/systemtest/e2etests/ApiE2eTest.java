@@ -19,7 +19,7 @@ import java.net.http.HttpResponse;
 
 class ApiE2eTest {
 
-    private static final String BASE_URL = "http://localhost:" + TestConfiguration.getServerPort();
+    private static final String BASE_URL = TestConfiguration.getBaseUrl();
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private HttpClient httpClient;
 

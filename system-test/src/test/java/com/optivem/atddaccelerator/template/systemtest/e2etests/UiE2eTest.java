@@ -22,7 +22,7 @@ class UiE2eTest {
         playwright = Playwright.create();
         browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
         page = browser.newPage();
-        baseUrl = "http://localhost:" + TestConfiguration.getServerPort();
+        baseUrl = TestConfiguration.getBaseUrl();
     }
 
     @AfterEach

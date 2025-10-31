@@ -1,6 +1,7 @@
 package com.optivem.atddaccelerator.template.systemtest.smoketests;
 
 import com.microsoft.playwright.*;
+import com.optivem.atddaccelerator.template.systemtest.TestConfiguration;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,7 +16,7 @@ public class UiSmokeTest {
             var page = browser.newPage();
             
             // Navigate and get response
-            var response = page.navigate("http://localhost:8080/");
+            var response = page.navigate(TestConfiguration.getBaseUrl());
             
             // Assert
             assertEquals(200, response.status());

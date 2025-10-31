@@ -25,8 +25,8 @@ public class TestConfiguration {
         return (T) current.get(keys[keys.length - 1]);
     }
     
-    public static int getServerPort() {
-        return getNestedValue("test", "server", "port");
+    public static String getBaseUrl() {
+        return getNestedValue("test", "eshop", "baseUrl");
     }
     
     public static int getWaitSeconds() {

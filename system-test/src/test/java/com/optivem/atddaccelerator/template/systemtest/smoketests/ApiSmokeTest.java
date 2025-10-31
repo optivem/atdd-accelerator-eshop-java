@@ -1,5 +1,6 @@
 package com.optivem.atddaccelerator.template.systemtest.smoketests;
 
+import com.optivem.atddaccelerator.template.systemtest.TestConfiguration;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -14,7 +15,7 @@ public class ApiSmokeTest {
     void echo_shouldReturn200OK() throws Exception {
         try (var client = HttpClient.newHttpClient()) {
             var request = HttpRequest.newBuilder()
-                    .uri(new URI("http://localhost:8080/api/echo"))
+                    .uri(new URI(TestConfiguration.getBaseUrl() + "/api/echo"))
                     .GET()
                     .build();
 
