@@ -1,6 +1,7 @@
 package com.optivem.atddaccelerator.template.systemtest.e2etests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.optivem.atddaccelerator.template.systemtest.TestConfiguration;
 import lombok.Data;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,8 +15,7 @@ import java.net.http.HttpResponse;
 
 class ApiE2eTest {
 
-    private static final int DEFAULT_PORT = 8080;
-    private static final String BASE_URL = "http://localhost:" + DEFAULT_PORT;
+    private static final String BASE_URL = "http://localhost:" + TestConfiguration.getServerPort();
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
     @Test

@@ -1,6 +1,7 @@
 package com.optivem.atddaccelerator.template.systemtest.e2etests;
 
 import com.microsoft.playwright.*;
+import com.optivem.atddaccelerator.template.systemtest.TestConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,9 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.regex.Pattern;
 
 class UiE2eTest {
-
-    private static final int DEFAULT_PORT = 8080;
-    private static final int DEFAULT_WAIT_SECONDS = 10;
     
     private Playwright playwright;
     private Browser browser;
@@ -24,7 +22,7 @@ class UiE2eTest {
         playwright = Playwright.create();
         browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
         page = browser.newPage();
-        baseUrl = "http://localhost:" + DEFAULT_PORT;
+        baseUrl = "http://localhost:" + TestConfiguration.getServerPort();
     }
 
     @AfterEach
@@ -56,7 +54,7 @@ class UiE2eTest {
 
         // Wait for confirmation message to appear
         Locator confirmationMessage = page.locator("[role='alert']");
-        confirmationMessage.waitFor(new Locator.WaitForOptions().setTimeout(DEFAULT_WAIT_SECONDS * 1000));
+        confirmationMessage.waitFor(new Locator.WaitForOptions().setTimeout(TestConfiguration.getWaitSeconds() * 1000));
 
         String confirmationMessageText = confirmationMessage.textContent();
 

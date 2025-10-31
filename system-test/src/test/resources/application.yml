@@ -1,0 +1,9 @@
+test:
+  server:
+    port: 8080
+  erp:
+    url:
+      e2e: https://optivem.free.beeceptor.com/sap-test/api
+      acc: http://localhost:8089
+  wait:
+    seconds: 10
