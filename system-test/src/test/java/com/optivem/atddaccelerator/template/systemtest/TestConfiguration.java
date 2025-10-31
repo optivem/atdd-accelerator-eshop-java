@@ -29,14 +29,6 @@ public class TestConfiguration {
         return getNestedValue("test", "server", "port");
     }
     
-    public static String getErpUrlE2e() {
-        return getNestedValue("test", "erp", "url", "e2e");
-    }
-    
-    public static String getErpUrlAcc() {
-        return getNestedValue("test", "erp", "url", "acc");
-    }
-    
     public static int getWaitSeconds() {
         return getNestedValue("test", "wait", "seconds");
     }
