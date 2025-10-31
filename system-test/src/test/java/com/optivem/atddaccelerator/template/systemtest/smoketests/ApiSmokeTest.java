@@ -10,19 +10,16 @@ import java.net.http.HttpResponse;
 
 public class ApiSmokeTest {
 
+    private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
+
     @Test
     void echo_shouldReturn200OK() throws Exception {
-        // DISCLAIMER: This is an example of a badly written test
-        // which unfortunately simulates real-life software test projects.
-        // This is the starting point for our ATDD Accelerator exercises.
-
-        var client = HttpClient.newHttpClient();
         var request = HttpRequest.newBuilder()
                 .uri(new URI("http://localhost:8080/api/echo"))
                 .GET()
                 .build();
 
-        var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        var response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
 
         assertEquals(200, response.statusCode());
     }

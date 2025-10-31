@@ -20,6 +20,7 @@ class ApiE2eTest {
 
     private static final String BASE_URL = "http://localhost:" + TestConfiguration.getServerPort();
     private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final HttpClient httpClient = HttpClient.newHttpClient();
 
     @Test
     void placeOrder_shouldReturnOrderNumber() throws Exception {
@@ -30,7 +31,6 @@ class ApiE2eTest {
         
         var requestBody = objectMapper.writeValueAsString(requestDto);
         
-        var client = HttpClient.newHttpClient();
         var request = HttpRequest.newBuilder()
                 .uri(new URI(BASE_URL + "/api/orders"))
                 .header("Content-Type", "application/json")
@@ -38,7 +38,7 @@ class ApiE2eTest {
                 .build();
 
         // Act
-        var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         // Assert
         assertEquals(200, response.statusCode(), "Response status should be 200 OK");
@@ -61,14 +61,13 @@ class ApiE2eTest {
         
         var requestBody = objectMapper.writeValueAsString(placeOrderRequest);
         
-        var client = HttpClient.newHttpClient();
         var postRequest = HttpRequest.newBuilder()
                 .uri(new URI(BASE_URL + "/api/orders"))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
 
-        var postResponse = client.send(postRequest, HttpResponse.BodyHandlers.ofString());
+        var postResponse = httpClient.send(postRequest, HttpResponse.BodyHandlers.ofString());
         var placeOrderResponse = objectMapper.readValue(postResponse.body(), PlaceOrderResponse.class);
         var orderNumber = placeOrderResponse.getOrderNumber();
         
@@ -78,7 +77,7 @@ class ApiE2eTest {
                 .GET()
                 .build();
 
-        var getResponse = client.send(getRequest, HttpResponse.BodyHandlers.ofString());
+        var getResponse = httpClient.send(getRequest, HttpResponse.BodyHandlers.ofString());
 
         // Assert
         assertEquals(200, getResponse.statusCode(), "Response status should be 200 OK");

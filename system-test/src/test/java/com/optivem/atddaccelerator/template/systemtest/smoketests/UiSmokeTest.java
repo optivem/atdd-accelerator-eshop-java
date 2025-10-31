@@ -10,10 +10,6 @@ public class UiSmokeTest {
 
     @Test
     void home_shouldReturnHtmlContent() {
-        // DISCLAIMER: This is an example of a badly written test
-        // which unfortunately simulates real-life software test projects.
-        // This is the starting point for our ATDD Accelerator exercises.
-
         try (var playwright = Playwright.create()) {
             var browser = playwright.chromium().launch();
             var page = browser.newPage();

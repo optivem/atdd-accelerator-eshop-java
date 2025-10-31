@@ -8,7 +8,6 @@ import java.util.UUID;
 
 @Repository
 public class OrderRepository {
-    // TODO: VJ: Replace with actual database
     private static final HashMap<String, Order> orders = new HashMap<>();
 
     public void saveOrder(Order order) {
