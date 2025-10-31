@@ -1,6 +1,5 @@
 package com.optivem.atddaccelerator.template.systemtest.e2etests;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import org.junit.jupiter.api.Test;
@@ -42,20 +41,22 @@ class ApiE2eTest {
         assertEquals(200, response.statusCode(), "Response status should be 200 OK");
         
         String responseBody = response.body();
-        JsonNode jsonResponse = objectMapper.readTree(responseBody);
+        PlaceOrderResponse responseDto = objectMapper.readValue(responseBody, PlaceOrderResponse.class);
         
         // Verify response contains orderNumber
-        assertTrue(jsonResponse.has("orderNumber"), "Response should contain orderNumber field");
-        
-        String orderNumber = jsonResponse.get("orderNumber").asText();
-        assertNotNull(orderNumber, "Order number should not be null");
-        assertTrue(orderNumber.startsWith("ORD-"), "Order number should start with ORD-");
+        assertNotNull(responseDto.getOrderNumber(), "Order number should not be null");
+        assertTrue(responseDto.getOrderNumber().startsWith("ORD-"), "Order number should start with ORD-");
     }
     
     @Data
     static class PlaceOrderRequest {
         private String sku;
         private int quantity;
+    }
+    
+    @Data
+    static class PlaceOrderResponse {
+        private String orderNumber;
     }
 
     // @Test
