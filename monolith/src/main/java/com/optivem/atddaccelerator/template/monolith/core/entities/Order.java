@@ -1,4 +1,4 @@
-package com.optivem.atddaccelerator.template.monolith.common;
+package com.optivem.atddaccelerator.template.monolith.core.entities;
 
 import lombok.Data;
 import java.math.BigDecimal;

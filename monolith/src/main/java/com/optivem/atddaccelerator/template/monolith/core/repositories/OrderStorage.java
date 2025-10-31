@@ -1,4 +1,6 @@
-package com.optivem.atddaccelerator.template.monolith.common;
+package com.optivem.atddaccelerator.template.monolith.core.repositories;
+
+import com.optivem.atddaccelerator.template.monolith.core.entities.Order;
 
 import java.util.HashMap;
 import java.util.UUID;

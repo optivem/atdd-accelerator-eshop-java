@@ -1,4 +1,9 @@
-package com.optivem.atddaccelerator.template.monolith.common;
+package com.optivem.atddaccelerator.template.monolith.core.services;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -7,18 +12,12 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+@Service
+public class ErpGateway {
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-@Component
-public class PriceCalculator {
-    
     @Value("${erp.url}")
     private String erpUrl;
-    
+
     public BigDecimal getUnitPrice(long productId) {
         try {
             System.out.println("Going to contact: " + erpUrl);
@@ -35,9 +34,5 @@ public class PriceCalculator {
         } catch (Exception e) {
             throw new RuntimeException("Failed to fetch price", e);
         }
-    }
-    
-    public BigDecimal calculateTotalPrice(BigDecimal unitPrice, int quantity) {
-        return unitPrice.multiply(BigDecimal.valueOf(quantity));
     }
 }

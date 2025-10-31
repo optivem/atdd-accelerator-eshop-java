@@ -109,6 +109,7 @@ class ApiE2eTest {
     @Data
     static class PlaceOrderResponse {
         private String orderNumber;
+        private BigDecimal totalPrice;
     }
     
     @Data
