@@ -2,6 +2,7 @@ package com.optivem.atddaccelerator.template.systemtest.e2etests;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Data;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -21,12 +22,11 @@ class ApiE2eTest {
     @Test
     void placeOrder_shouldReturnOrderNumber() throws Exception {
         // Arrange
-        String requestBody = """
-            {
-                "sku": "1001",
-                "quantity": 5
-            }
-            """;
+        PlaceOrderRequest requestDto = new PlaceOrderRequest();
+        requestDto.setSku("1001");
+        requestDto.setQuantity(5);
+        
+        String requestBody = objectMapper.writeValueAsString(requestDto);
         
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
@@ -50,6 +50,12 @@ class ApiE2eTest {
         String orderNumber = jsonResponse.get("orderNumber").asText();
         assertNotNull(orderNumber, "Order number should not be null");
         assertTrue(orderNumber.startsWith("ORD-"), "Order number should start with ORD-");
+    }
+    
+    @Data
+    static class PlaceOrderRequest {
+        private String sku;
+        private int quantity;
     }
 
     // @Test
