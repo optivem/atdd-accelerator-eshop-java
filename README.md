@@ -1,5 +1,4 @@
-# atdd-accelerator-eshop-java
-ATDD Accelerator eShop (Java)
+# ATDD Accelerator eShop (Java)
 
 [![commit-stage-monolith](https://github.com/optivem/atdd-accelerator-eshop-java/actions/workflows/commit-stage-monolith.yml/badge.svg)](https://github.com/optivem/atdd-accelerator-eshop-java/actions/workflows/commit-stage-monolith.yml)
 [![acceptance-stage](https://github.com/optivem/atdd-accelerator-eshop-java/actions/workflows/acceptance-stage.yml/badge.svg)](https://github.com/optivem/atdd-accelerator-eshop-java/actions/workflows/acceptance-stage.yml)

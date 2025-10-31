@@ -8,6 +8,12 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 public class ShopMvcController {
+    @GetMapping("/")
+    @ResponseBody
+    public String home() {
+        return "ATDD Accelerator eShop is running!";
+    }
+    
     @GetMapping("/shop")
     @ResponseBody
     public String shopPage() {
