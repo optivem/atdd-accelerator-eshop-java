@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.net.URI;
 import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 public abstract class BaseControllerClient {
 
@@ -30,6 +32,31 @@ public abstract class BaseControllerClient {
             return new URI(baseUrl + "/" + path);
         } catch (Exception ex) {
             throw new RuntimeException(ex);
+        }
+    }
+
+    protected <T> T readBody(HttpResponse<String> httpResponse, Class<T> responseType) {
+        try {
+            var responseBody = httpResponse.body();
+            return objectMapper.readValue(responseBody, responseType);
+        } catch (Exception ex) {
+            throw new RuntimeException("Failed to deserialize response to " + responseType.getSimpleName(), ex);
+        }
+    }
+
+    protected String serializeRequest(Object request) {
+        try {
+            return objectMapper.writeValueAsString(request);
+        } catch (Exception ex) {
+            throw new RuntimeException("Failed to serialize request object", ex);
+        }
+    }
+
+    protected HttpResponse<String> sendRequest(HttpRequest httpRequest) {
+        try {
+            return httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        } catch (Exception ex) {
+            throw new RuntimeException("Failed to send HTTP request", ex);
         }
     }
 }

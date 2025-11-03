@@ -3,7 +3,9 @@ package com.optivem.atddaccelerator.eshop.systemtest.core.clients.api.controller
 import com.optivem.atddaccelerator.eshop.systemtest.core.clients.api.dtos.GetOrderResponse;
 import com.optivem.atddaccelerator.eshop.systemtest.core.clients.api.dtos.PlaceOrderRequest;
 import com.optivem.atddaccelerator.eshop.systemtest.core.clients.api.dtos.PlaceOrderResponse;
+import org.springframework.http.HttpStatus;
 
+import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
@@ -15,12 +17,12 @@ public class OrderControllerClient extends BaseControllerClient {
         super(client, baseUrl);
     }
 
-    public PlaceOrderResponse placeOrderSuccessfully(long productId, int quantity) throws Exception {
+    public HttpResponse<String> placeOrder(long productId, int quantity) {
         var request = new PlaceOrderRequest();
         request.setProductId(productId);
         request.setQuantity(quantity);
 
-        var requestBody = objectMapper.writeValueAsString(request);
+        var requestBody = serializeRequest(request);
 
         var uri = getUri("api/orders");
 
@@ -30,15 +32,15 @@ public class OrderControllerClient extends BaseControllerClient {
                 .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
 
-        var httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-
-        assertEquals(200, httpResponse.statusCode(), "Response status should be 200 OK");
-
-        var responseBody = httpResponse.body();
-        return objectMapper.readValue(responseBody, PlaceOrderResponse.class);
+        return sendRequest(httpRequest);
     }
 
-    public GetOrderResponse getOrderSuccessfully(String orderNumber) throws Exception {
+    public PlaceOrderResponse confirmOrderPlacedSuccessfully(HttpResponse<String> httpResponse) {
+        assertEquals(HttpStatus.CREATED.value(), httpResponse.statusCode());
+        return readBody(httpResponse, PlaceOrderResponse.class);
+    }
+
+    public HttpResponse<String> viewOrder(String orderNumber) {
         var uri = getUri("api/orders/" + orderNumber);
 
         var httpRequest = HttpRequest.newBuilder()
@@ -46,25 +48,27 @@ public class OrderControllerClient extends BaseControllerClient {
                 .GET()
                 .build();
 
-        var httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-
-        assertEquals(200, httpResponse.statusCode(), "Response status should be 200 OK");
-
-        var responseBody = httpResponse.body();
-        return objectMapper.readValue(responseBody, GetOrderResponse.class);
+        return sendRequest(httpRequest);
     }
 
-    public void cancelOrderSuccessfully(String orderNumber) throws Exception {
-        var uri = getUri("api/orders/" + orderNumber + "/cancel");
+    public GetOrderResponse confirmOrderViewedSuccessfully(HttpResponse<String> httpResponse) {
+        assertEquals(HttpStatus.OK.value(), httpResponse.statusCode());
+        return readBody(httpResponse, GetOrderResponse.class);
+    }
+
+    public HttpResponse<String> cancelOrder(String orderNumber) {
+        var uri = getUri("api/orders/" + orderNumber);
 
         var httpRequest = HttpRequest.newBuilder()
                 .uri(uri)
-                .POST(HttpRequest.BodyPublishers.noBody())
+                .DELETE()
                 .build();
 
-        var httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
+        return sendRequest(httpRequest);
+    }
 
-        assertEquals(200, httpResponse.statusCode(), "Response status should be 200 OK");
+    public void confirmOrderCancelledSuccessfully(HttpResponse<String> httpResponse) {
+        assertEquals(HttpStatus.NO_CONTENT.value(), httpResponse.statusCode());
     }
 
 }

@@ -49,69 +49,64 @@ class ApiE2eTest {
         var quantity = 5;
 
         // Act
-        var response = apiClient.getOrderController().placeOrderSuccessfully(productId, quantity);
+        var httpResponse = apiClient.getOrderController().placeOrder(productId, quantity);
 
         // Assert
+        var response = apiClient.getOrderController().confirmOrderPlacedSuccessfully(httpResponse);
         assertNotNull(response.getOrderNumber(), "Order number should not be null");
         assertTrue(response.getOrderNumber().startsWith("ORD-"), "Order number should start with ORD-");
     }
 
     @Test
     void getOrder_shouldReturnOrderDetails() throws Exception {
-        // Arrange - First place an order
+        // Arrange
         var productId = 11;
         var quantity = 3;
 
-        var placeOrderResponse = apiClient.getOrderController().placeOrderSuccessfully(productId, quantity);
+        var orderNumber = placeOrderAndGetOrderNumber(productId, quantity);
+        
+        // Act
+        var httpResponse = apiClient.getOrderController().viewOrder(orderNumber);
 
-        var orderNumber = placeOrderResponse.getOrderNumber();
+        // Assert
+        var response = apiClient.getOrderController().confirmOrderViewedSuccessfully(httpResponse);
         
-        // Act - Get the order details
-        var getOrderResponse = apiClient.getOrderController().getOrderSuccessfully(orderNumber);
-        
-        assertEquals(orderNumber, getOrderResponse.getOrderNumber(), "Order number should match");
-        assertEquals(11L, getOrderResponse.getProductId(), "Product ID should be 11");
-        assertEquals(3, getOrderResponse.getQuantity(), "Quantity should be 3");
-        
-        // Price will come from DummyJSON API for product 11
-        assertNotNull(getOrderResponse.getUnitPrice(), "Unit price should not be null");
-        assertNotNull(getOrderResponse.getTotalPrice(), "Total price should not be null");
+        assertEquals(orderNumber, response.getOrderNumber(), "Order number should match");
+        assertEquals(productId, response.getProductId(), "Product ID should match");
+        assertEquals(quantity, response.getQuantity(), "Quantity should match");
+
+        assertNotNull(response.getUnitPrice(), "Unit price should not be null");
+        assertNotNull(response.getTotalPrice(), "Total price should not be null");
     }
 
     @Test
-    void cancelOrder_shouldSetStatusToCancelled() throws Exception {
-        // Arrange - First place an order
+    void cancelOrder_shouldSetStatusToCancelled() {
+        // Arrange
         var productId = 12;
         var quantity = 2;
 
-        var placeOrderResponse = apiClient.getOrderController().placeOrderSuccessfully(productId, quantity);
-        var orderNumber = placeOrderResponse.getOrderNumber();
+        var orderNumber = placeOrderAndGetOrderNumber(productId, quantity);
         
-        // Act - Cancel the order
-        var deleteRequest = HttpRequest.newBuilder()
-                .uri(new URI(BASE_URL + "/api/orders/" + orderNumber))
-                .DELETE()
-                .build();
+        // Act
+        var httpResponse = apiClient.getOrderController().cancelOrder(orderNumber);
 
-        var deleteResponse = httpClient.send(deleteRequest, HttpResponse.BodyHandlers.ofString());
+        // Assert
+        apiClient.getOrderController().confirmOrderCancelledSuccessfully(httpResponse);
 
-        // Assert - Verify cancel response
-        assertEquals(204, deleteResponse.statusCode(), "Response status should be 204 No Content");
-        
-        // Verify order status is CANCELLED
-        var getRequest = HttpRequest.newBuilder()
-                .uri(new URI(BASE_URL + "/api/orders/" + orderNumber))
-                .GET()
-                .build();
-
-        var getResponse = httpClient.send(getRequest, HttpResponse.BodyHandlers.ofString());
-        assertEquals(200, getResponse.statusCode(), "Response status should be 200 OK");
-        
-        var getOrderResponse = objectMapper.readValue(getResponse.body(), GetOrderResponse.class);
-        assertEquals("CANCELLED", getOrderResponse.getStatus(), "Order status should be CANCELLED");
+        var orderDetails = getOrderDetails(orderNumber);
+        assertEquals("CANCELLED", orderDetails.getStatus(), "Order status should be CANCELLED");
     }
-    
 
+    private String placeOrderAndGetOrderNumber(long productId, int quantity) {
+        var httpResponse = apiClient.getOrderController().placeOrder(productId, quantity);
+        var placeOrderResponse = apiClient.getOrderController().confirmOrderPlacedSuccessfully(httpResponse);
+        return placeOrderResponse.getOrderNumber();
+    }
+
+    private GetOrderResponse getOrderDetails(String orderNumber) {
+        var httpResponse = apiClient.getOrderController().viewOrder(orderNumber);
+        return apiClient.getOrderController().confirmOrderViewedSuccessfully(httpResponse);
+    }
     
 
     
