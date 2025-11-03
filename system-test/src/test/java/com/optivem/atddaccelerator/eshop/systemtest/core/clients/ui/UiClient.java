@@ -1,10 +1,10 @@
 package com.optivem.atddaccelerator.eshop.systemtest.core.clients.ui;
 
-import com.microsoft.playwright.Browser;
-import com.microsoft.playwright.BrowserType;
-import com.microsoft.playwright.Page;
-import com.microsoft.playwright.Playwright;
+import com.microsoft.playwright.*;
 import com.optivem.atddaccelerator.eshop.systemtest.core.clients.ui.pages.HomePage;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UiClient implements AutoCloseable {
 
@@ -22,14 +22,27 @@ public class UiClient implements AutoCloseable {
         this.page = browser.newPage();
 
         this.homePage = new HomePage(page, baseUrl);
+
+        page.onDialog(Dialog::accept); // Auto-accept the alert
     }
 
-    public HomePage getHomePage() {
+    public HomePage openHomePage() {
+        var response = page.navigate(baseUrl);
+        assertEquals(200, response.status());
+
+        var contentType = response.headers().get("content-type");
+        assertTrue(contentType != null && contentType.contains("text/html"),
+                "Content-Type should be text/html, but was: " + contentType);
+
+        // Check HTML structure using Playwright's content method
+        var pageContent = page.content();
+        assertTrue(pageContent.contains("<html"), "Response should contain HTML opening tag");
+        assertTrue(pageContent.contains("</html>"), "Response should contain HTML closing tag");
         return homePage;
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         if (page != null) {
             page.close();
         }
