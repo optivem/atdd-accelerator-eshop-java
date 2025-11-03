@@ -45,9 +45,14 @@ class ApiE2eTest {
         var httpResponse = apiClient.getOrderController().placeOrder(productId, quantity);
 
         // Assert
-        var response = apiClient.getOrderController().confirmOrderPlacedSuccessfully(httpResponse);
-        assertNotNull(response.getOrderNumber(), "Order number should not be null");
-        assertTrue(response.getOrderNumber().startsWith("ORD-"), "Order number should start with ORD-");
+        assertEquals(201, response.statusCode(), "Response status should be 201 CREATED");
+
+        var responseBody = response.body();
+        var responseDto = objectMapper.readValue(responseBody, PlaceOrderResponse.class);
+        
+        // Verify response contains orderNumber
+        assertNotNull(responseDto.getOrderNumber(), "Order number should not be null");
+        assertTrue(responseDto.getOrderNumber().startsWith("ORD-"), "Order number should start with ORD-");
     }
 
     @Test
@@ -80,14 +85,28 @@ class ApiE2eTest {
 
         var orderNumber = placeOrderAndGetOrderNumber(productId, quantity);
         
-        // Act
-        var httpResponse = apiClient.getOrderController().cancelOrder(orderNumber);
+        // Act - Cancel the order
+        var cancelRequest = HttpRequest.newBuilder()
+                .uri(new URI(BASE_URL + "/api/orders/" + orderNumber + "/cancel"))
+                .POST(HttpRequest.BodyPublishers.noBody())
+                .build();
 
-        // Assert
-        apiClient.getOrderController().confirmOrderCancelledSuccessfully(httpResponse);
+        var cancelResponse = httpClient.send(cancelRequest, HttpResponse.BodyHandlers.ofString());
 
-        var orderDetails = getOrderDetails(orderNumber);
-        assertEquals("CANCELLED", orderDetails.getStatus(), "Order status should be CANCELLED");
+        // Assert - Verify cancel response
+        assertEquals(204, cancelResponse.statusCode(), "Response status should be 204 No Content");
+
+        // Verify order status is CANCELLED
+        var getRequest = HttpRequest.newBuilder()
+                .uri(new URI(BASE_URL + "/api/orders/" + orderNumber))
+                .GET()
+                .build();
+
+        var getResponse = httpClient.send(getRequest, HttpResponse.BodyHandlers.ofString());
+        assertEquals(200, getResponse.statusCode(), "Response status should be 200 OK");
+        
+        var getOrderResponse = objectMapper.readValue(getResponse.body(), GetOrderResponse.class);
+        assertEquals("CANCELLED", getOrderResponse.getStatus(), "Order status should be CANCELLED");
     }
 
     private String placeOrderAndGetOrderNumber(long productId, int quantity) {
