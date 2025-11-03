@@ -63,16 +63,16 @@ public class ApiDriver implements Driver {
         var httpResponse = ordersViewed.get(orderNumberAlias);
         var response = apiClient.getOrderController().confirmOrderViewedSuccessfully(httpResponse);
 
-        assertEquals(productId, response.getProductId());
-        assertEquals(quantity, response.getQuantity());
+        assertEquals(Long.parseLong(productId), response.getProductId());
+        assertEquals(Long.parseLong(quantity), response.getQuantity());
 
-        assertNotNull(response.getUnitPrice(), "Unit price should not be null");
-        var decimalUnitPrice = new BigDecimal(response.getUnitPrice());
-        assertTrue(decimalUnitPrice.compareTo(BigDecimal.ZERO) > 0, "Unit price should be positive");
+        var unitPrice = response.getUnitPrice();
+        assertNotNull(unitPrice, "Unit price should not be null");
+        assertTrue(unitPrice.compareTo(BigDecimal.ZERO) > 0, "Unit price should be positive");
 
-        assertNotNull(response.getTotalPrice(), "Total price should not be null");
-        var decimalTotalPrice = new BigDecimal(response.getTotalPrice());
-        assertTrue(decimalTotalPrice.compareTo(BigDecimal.ZERO) > 0, "Total price should be positive");
+        var totalPrice = response.getTotalPrice();
+        assertNotNull(totalPrice, "Total price should not be null");
+        assertTrue(totalPrice.compareTo(BigDecimal.ZERO) > 0, "Total price should be positive");
     }
 
     @Override
