@@ -23,7 +23,6 @@ public class OrderController {
         var response = orderService.placeOrder(request);
         var location = URI.create("/api/orders/" + response.getOrderNumber());
         return ResponseEntity.created(location).body(response);
-
     }
 
     @GetMapping("/api/orders/{orderNumber}")
