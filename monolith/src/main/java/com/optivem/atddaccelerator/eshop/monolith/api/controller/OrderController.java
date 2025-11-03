@@ -7,6 +7,8 @@ import com.optivem.atddaccelerator.eshop.monolith.core.dtos.PlaceOrderResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+
 @RestController
 public class OrderController {
 
@@ -19,7 +21,8 @@ public class OrderController {
     @PostMapping("/api/orders")
     public ResponseEntity<PlaceOrderResponse> placeOrder(@RequestBody PlaceOrderRequest request) {
         var response = orderService.placeOrder(request);
-        return ResponseEntity.ok(response);
+        var location = URI.create("/api/orders/" + response.getOrderNumber());
+        return ResponseEntity.created(location).body(response);
     }
 
     @GetMapping("/api/orders/{orderNumber}")
@@ -28,7 +31,7 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/api/orders/{orderNumber}")
+    @PostMapping("/api/orders/{orderNumber}/cancel")
     public ResponseEntity<Void> cancelOrder(@PathVariable String orderNumber) {
         orderService.cancelOrder(orderNumber);
         return ResponseEntity.noContent().build();

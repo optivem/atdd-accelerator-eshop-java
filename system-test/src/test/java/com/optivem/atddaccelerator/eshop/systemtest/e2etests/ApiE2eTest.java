@@ -54,8 +54,8 @@ class ApiE2eTest {
         var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         // Assert
-        assertEquals(200, response.statusCode(), "Response status should be 200 OK");
-        
+        assertEquals(201, response.statusCode(), "Response status should be 201 CREATED");
+
         var responseBody = response.body();
         var responseDto = objectMapper.readValue(responseBody, PlaceOrderResponse.class);
         
@@ -125,16 +125,16 @@ class ApiE2eTest {
         var orderNumber = placeOrderResponse.getOrderNumber();
         
         // Act - Cancel the order
-        var deleteRequest = HttpRequest.newBuilder()
-                .uri(new URI(BASE_URL + "/api/orders/" + orderNumber))
-                .DELETE()
+        var cancelRequest = HttpRequest.newBuilder()
+                .uri(new URI(BASE_URL + "/api/orders/" + orderNumber + "/cancel"))
+                .POST(HttpRequest.BodyPublishers.noBody())
                 .build();
 
-        var deleteResponse = httpClient.send(deleteRequest, HttpResponse.BodyHandlers.ofString());
+        var cancelResponse = httpClient.send(cancelRequest, HttpResponse.BodyHandlers.ofString());
 
         // Assert - Verify cancel response
-        assertEquals(204, deleteResponse.statusCode(), "Response status should be 204 No Content");
-        
+        assertEquals(204, cancelResponse.statusCode(), "Response status should be 204 No Content");
+
         // Verify order status is CANCELLED
         var getRequest = HttpRequest.newBuilder()
                 .uri(new URI(BASE_URL + "/api/orders/" + orderNumber))
