@@ -2,6 +2,7 @@ package com.optivem.atddaccelerator.eshop.systemtest.core.clients.ui.pages;
 
 import com.microsoft.playwright.Page;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -52,7 +53,7 @@ public class NewOrderPage extends BasePage {
         return Optional.of(orderNumber);
     }
 
-    public Optional<String> getTotalPrice() {
+    public Optional<BigDecimal> getTotalPrice() {
         var confirmationMessageText = readConfirmationMessageText();
         var matcher = getConfirmationMessageTextMatcher(confirmationMessageText);
 
@@ -61,7 +62,8 @@ public class NewOrderPage extends BasePage {
         }
 
         var totalPriceString = matcher.group(2);
-        return Optional.of(totalPriceString);
+        var totalPrice = new BigDecimal(totalPriceString);
+        return Optional.of(totalPrice);
     }
 
     private Matcher getConfirmationMessageTextMatcher(String confirmationMessageText) {

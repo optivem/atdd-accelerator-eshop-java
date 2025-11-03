@@ -2,6 +2,8 @@ package com.optivem.atddaccelerator.eshop.systemtest.core.clients.ui.pages;
 
 import com.microsoft.playwright.Page;
 
+import java.math.BigDecimal;
+
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class OrderHistoryPage extends BasePage {
@@ -42,14 +44,14 @@ public class OrderHistoryPage extends BasePage {
         return displayQuantity.inputValue();
     }
 
-    public String getUnitPrice() {
+    public BigDecimal getUnitPrice() {
         var displayUnitPrice = page.locator("[aria-label='Display Unit Price']");
-        return displayUnitPrice.inputValue();
+        return new BigDecimal(displayUnitPrice.inputValue());
     }
 
-    public String getTotalPrice() {
+    public BigDecimal getTotalPrice() {
         var displayTotalPrice = page.locator("[aria-label='Display Total Price']");
-        return displayTotalPrice.inputValue();
+        return new BigDecimal(displayTotalPrice.inputValue());
     }
 
     public String getStatus() {

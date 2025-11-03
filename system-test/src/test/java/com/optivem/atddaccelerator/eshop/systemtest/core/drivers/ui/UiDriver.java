@@ -49,6 +49,7 @@ public class UiDriver implements Driver {
         newOrderPage.confirmConfirmationMessageShown();
         assertTrue(newOrderPage.getOrderNumber().isPresent(), "Order number should be present after placing order");
         assertTrue(newOrderPage.getTotalPrice().isPresent(), "Total price should be present after placing order");
+        assertTrue(newOrderPage.getTotalPrice().get().compareTo(BigDecimal.ZERO) > 0, "Total price should be positive after placing order");
 
         var displayOrderNumber = orderHistoryPage.getOrderNumber();
         assertTrue(displayOrderNumber.startsWith(prefix), "Order number should start with prefix: " + prefix);
@@ -77,12 +78,10 @@ public class UiDriver implements Driver {
         assertEquals(quantity, displayQuantity, "Should display quantity: " + quantity);
 
         var displayUnitPrice = orderHistoryPage.getUnitPrice();
-        var decimalUnitPrice = new BigDecimal(displayUnitPrice);
-        assertTrue(decimalUnitPrice.compareTo(BigDecimal.ZERO) > 0, "Unit price should be positive");
+        assertTrue(displayUnitPrice.compareTo(BigDecimal.ZERO) > 0, "Unit price should be positive");
 
         var displayTotalPrice = orderHistoryPage.getTotalPrice();
-        var decimalTotalPrice = new BigDecimal(displayTotalPrice);
-        assertTrue(decimalTotalPrice.compareTo(BigDecimal.ZERO) > 0, "Total price should be positive");
+        assertTrue(displayTotalPrice.compareTo(BigDecimal.ZERO) > 0, "Total price should be positive");
     }
 
 
