@@ -9,6 +9,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -17,7 +18,7 @@ public class OrderControllerClient extends BaseControllerClient {
         super(client, baseUrl);
     }
 
-    public HttpResponse<String> placeOrder(long productId, int quantity) {
+    public HttpResponse<String> placeOrder(String productId, String quantity) {
         var request = new PlaceOrderRequest();
         request.setProductId(productId);
         request.setQuantity(quantity);
@@ -71,4 +72,13 @@ public class OrderControllerClient extends BaseControllerClient {
         assertEquals(HttpStatus.NO_CONTENT.value(), httpResponse.statusCode());
     }
 
+    public Optional<String> getOrderNumberIfOrderPlacedSuccessfully(HttpResponse<String> httpResponse) {
+        if(httpResponse.statusCode() != HttpStatus.CREATED.value()) {
+            return Optional.empty();
+        }
+
+        var response = readBody(httpResponse, PlaceOrderResponse.class);
+        var orderNumber = response.getOrderNumber();
+        return Optional.of(orderNumber);
+    }
 }

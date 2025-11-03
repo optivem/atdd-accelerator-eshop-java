@@ -2,6 +2,8 @@ package com.optivem.atddaccelerator.eshop.systemtest.smoketests;
 
 import com.optivem.atddaccelerator.eshop.systemtest.TestConfiguration;
 import com.optivem.atddaccelerator.eshop.systemtest.core.clients.api.ApiClient;
+import com.optivem.atddaccelerator.eshop.systemtest.core.drivers.Driver;
+import com.optivem.atddaccelerator.eshop.systemtest.core.drivers.api.ApiDriver;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,26 +14,10 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
-public class ApiSmokeTest {
+public class ApiSmokeTest extends BaseSmokeTest {
 
-    private ApiClient apiClient;
-
-    @BeforeEach
-    void setUp() {
-        var baseUrl = TestConfiguration.getBaseUrl();
-        this.apiClient = new ApiClient(baseUrl);
-    }
-
-    @AfterEach
-    void tearDown() {
-        if (apiClient != null) {
-            apiClient.close();
-        }
-    }
-
-    @Test
-    void echo_shouldReturn200OK() throws Exception {
-        var httpResponse = apiClient.getEchoController().echo();
-        apiClient.getEchoController().confirmEchoSuccessful(httpResponse);
+    @Override
+    protected Driver createDriver(String baseUrl) {
+        return new ApiDriver(baseUrl);
     }
 }

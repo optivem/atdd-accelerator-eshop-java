@@ -2,30 +2,17 @@ package com.optivem.atddaccelerator.eshop.systemtest.smoketests;
 
 import com.optivem.atddaccelerator.eshop.systemtest.TestConfiguration;
 import com.optivem.atddaccelerator.eshop.systemtest.core.clients.ui.UiClient;
+import com.optivem.atddaccelerator.eshop.systemtest.core.drivers.Driver;
+import com.optivem.atddaccelerator.eshop.systemtest.core.drivers.ui.UiDriver;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class UiSmokeTest {
+public class UiSmokeTest extends BaseSmokeTest {
 
-    private UiClient uiClient;
-
-    @BeforeEach
-    void setUp() {
-        var baseUrl = TestConfiguration.getBaseUrl();
-        this.uiClient = new UiClient(baseUrl);
-    }
-
-    @AfterEach
-    void tearDown() {
-        if (uiClient != null) {
-            uiClient.close();
-        }
-    }
-
-    @Test
-    void home_shouldReturnHtmlContent() {
-        uiClient.openHomePage();
+    @Override
+    protected Driver createDriver(String baseUrl) {
+        return new UiDriver(baseUrl);
     }
 }

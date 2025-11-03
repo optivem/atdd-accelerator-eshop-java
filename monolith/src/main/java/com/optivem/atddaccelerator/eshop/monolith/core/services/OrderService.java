@@ -2,6 +2,7 @@ package com.optivem.atddaccelerator.eshop.monolith.core.services;
 
 import com.optivem.atddaccelerator.eshop.monolith.core.entities.Order;
 import com.optivem.atddaccelerator.eshop.monolith.core.entities.OrderStatus;
+import com.optivem.atddaccelerator.eshop.monolith.core.exceptions.NotExistValidationException;
 import com.optivem.atddaccelerator.eshop.monolith.core.exceptions.ValidationException;
 import com.optivem.atddaccelerator.eshop.monolith.core.repositories.OrderRepository;
 import com.optivem.atddaccelerator.eshop.monolith.core.services.external.ErpGateway;
@@ -55,7 +56,13 @@ public class OrderService {
     }
 
     public GetOrderResponse getOrder(String orderNumber) {
-        var order = orderRepository.getOrder(orderNumber);
+        var optionalOrder = orderRepository.getOrder(orderNumber);
+
+        if(optionalOrder.isEmpty()) {
+            throw new NotExistValidationException("Order " + orderNumber + " does not exist.");
+        }
+
+        var order = optionalOrder.get();
 
         var response = new GetOrderResponse();
         response.setOrderNumber(orderNumber);
@@ -69,6 +76,14 @@ public class OrderService {
     }
 
     public void cancelOrder(String orderNumber) {
+        var optionalOrder = orderRepository.getOrder(orderNumber);
+
+        if(optionalOrder.isEmpty()) {
+            throw new NotExistValidationException("Order " + orderNumber + " does not exist.");
+        }
+
+        var order = optionalOrder.get();
+
         var now = LocalDateTime.now();
         var currentDate = MonthDay.from(now);
         var currentTime = now.toLocalTime();
@@ -78,8 +93,7 @@ public class OrderService {
             currentTime.isBefore(CANCELLATION_BLOCK_END)) {
             throw new ValidationException("Order cancellation is not allowed on December 31st between 22:00 and 23:00");
         }
-        
-        var order = orderRepository.getOrder(orderNumber);
+
         order.setStatus(OrderStatus.CANCELLED);
         orderRepository.updateOrder(order);
     }
