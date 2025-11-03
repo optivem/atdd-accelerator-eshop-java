@@ -17,7 +17,7 @@ public class OrderControllerClient extends BaseControllerClient {
         super(client, baseUrl);
     }
 
-    public HttpResponse<String> placeOrder(long productId, int quantity) {
+    public HttpResponse<String> placeOrder(String productId, String quantity) {
         var request = new PlaceOrderRequest();
         request.setProductId(productId);
         request.setQuantity(quantity);

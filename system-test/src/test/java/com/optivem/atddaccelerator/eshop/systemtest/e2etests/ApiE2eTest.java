@@ -38,8 +38,8 @@ class ApiE2eTest {
     @Test
     void placeOrder_shouldReturnOrderNumber() throws Exception {
         // Arrange
-        var productId = 10;
-        var quantity = 5;
+        String productId = "10";
+        String quantity = "5";
 
         // Act
         var httpResponse = apiClient.getOrderController().placeOrder(productId, quantity);
@@ -53,8 +53,8 @@ class ApiE2eTest {
     @Test
     void getOrder_shouldReturnOrderDetails() throws Exception {
         // Arrange
-        var productId = 11;
-        var quantity = 3;
+        var productId = "11";
+        var quantity = "3";
 
         var orderNumber = placeOrderAndGetOrderNumber(productId, quantity);
         
@@ -75,8 +75,8 @@ class ApiE2eTest {
     @Test
     void cancelOrder_shouldSetStatusToCancelled() {
         // Arrange
-        var productId = 12;
-        var quantity = 2;
+        var productId = "12";
+        var quantity = "2";
 
         var orderNumber = placeOrderAndGetOrderNumber(productId, quantity);
         
@@ -90,7 +90,7 @@ class ApiE2eTest {
         assertEquals("CANCELLED", orderDetails.getStatus(), "Order status should be CANCELLED");
     }
 
-    private String placeOrderAndGetOrderNumber(long productId, int quantity) {
+    private String placeOrderAndGetOrderNumber(String productId, String quantity) {
         var httpResponse = apiClient.getOrderController().placeOrder(productId, quantity);
         var placeOrderResponse = apiClient.getOrderController().confirmOrderPlacedSuccessfully(httpResponse);
         return placeOrderResponse.getOrderNumber();
