@@ -4,6 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order History - ATDD Accelerator eShop</title>
+    <style>
+        .notification {
+            padding: 12px;
+            margin-bottom: 16px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+        .notification.success {
+            background: #e6ffed;
+            color: #0b6623;
+            border: 1px solid #b7f0c4;
+        }
+        .notification.error {
+            background: #ffe6e6;
+            color: #8b0000;
+            border: 1px solid #f5b7b7;
+        }
+    </style>
 </head>
 <body>
     <h1>Order History</h1>
@@ -83,21 +101,39 @@
 
         async function cancelOrder(orderNumber) {
             try {
-                const response = await fetch(`/api/orders/${orderNumber}`, {
-                    method: 'DELETE'
+                const response = await fetch(`/api/orders/${orderNumber}/cancel`, {
+                    method: 'POST'
                 });
                 
                 if (response.status === 204) {
-                    alert('Order cancelled successfully!');
                     // Refresh order details to show updated status
-                    displayOrderDetails(orderNumber);
+                    await displayOrderDetails(orderNumber);
+                    showNotification('Order cancelled successfully!', false);
                 } else {
-                    alert('Failed to cancel order. Please try again.');
+                    showNotification('Failed to cancel order. Please try again.', true);
                 }
             } catch (error) {
-                alert('Error cancelling order. Please try again.');
+                showNotification('Error cancelling order. Please try again.', true);
                 console.error('Error:', error);
             }
+        }
+
+        function showNotification(message, isError = false) {
+            const resultDiv = document.getElementById('orderDetails');
+            const notif = document.createElement('div');
+            notif.setAttribute('role', 'alert');
+            notif.className = `notification ${isError ? 'error' : 'success'}`;
+            notif.textContent = message;
+
+            // Prepend notification above order details
+            resultDiv.prepend(notif);
+
+            // Remove notification after 3 seconds
+            setTimeout(() => {
+                if (notif.parentNode) {
+                    notif.remove();
+                }
+            }, 3000);
         }
     </script>
 </body>

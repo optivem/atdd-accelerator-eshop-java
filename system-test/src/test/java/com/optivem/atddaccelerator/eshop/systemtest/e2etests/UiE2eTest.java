@@ -135,6 +135,7 @@ class UiE2eTest {
         orderHistoryPage.clickCancelOrder();
 
         // Assert
+        // orderHistoryPage = viewOrderDetails(orderNumber);
         var displayStatusAfterCancel = orderHistoryPage.getStatus();
         assertEquals("CANCELLED", displayStatusAfterCancel, "Status should be CANCELLED after cancellation");
         orderHistoryPage.confirmCancelButtonNotVisible();

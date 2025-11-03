@@ -31,7 +31,7 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/api/orders/{orderNumber}")
+    @PostMapping("/api/orders/{orderNumber}/cancel")
     public ResponseEntity<Void> cancelOrder(@PathVariable String orderNumber) {
         orderService.cancelOrder(orderNumber);
         return ResponseEntity.noContent().build();

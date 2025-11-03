@@ -57,11 +57,11 @@ public class OrderControllerClient extends BaseControllerClient {
     }
 
     public HttpResponse<String> cancelOrder(String orderNumber) {
-        var uri = getUri("api/orders/" + orderNumber);
+        var uri = getUri("api/orders/" + orderNumber + "/cancel");
 
         var httpRequest = HttpRequest.newBuilder()
                 .uri(uri)
-                .DELETE()
+                .POST(HttpRequest.BodyPublishers.noBody())
                 .build();
 
         return sendRequest(httpRequest);
