@@ -1,5 +1,6 @@
 package com.optivem.atddaccelerator.eshop.systemtest.core.clients.ui.pages;
 
+import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
 import java.math.BigDecimal;
@@ -46,12 +47,12 @@ public class OrderHistoryPage extends BasePage {
 
     public BigDecimal getUnitPrice() {
         var displayUnitPrice = page.locator("[aria-label='Display Unit Price']");
-        return new BigDecimal(displayUnitPrice.inputValue());
+        return getCurrencyValue(displayUnitPrice);
     }
 
     public BigDecimal getTotalPrice() {
         var displayTotalPrice = page.locator("[aria-label='Display Total Price']");
-        return new BigDecimal(displayTotalPrice.inputValue());
+        return getCurrencyValue(displayTotalPrice);
     }
 
     public String getStatus() {
@@ -70,5 +71,11 @@ public class OrderHistoryPage extends BasePage {
     public void confirmCancelButtonNotVisible() {
         var cancelButton = page.locator("[aria-label='Cancel Order']");
         assertTrue(cancelButton.isHidden(), "Cancel Order button should not be visible");
+    }
+
+    private static BigDecimal getCurrencyValue(Locator locator) {
+        var value = locator.inputValue();
+        value = value.replace("$", "").trim();
+        return new BigDecimal(value);
     }
 }

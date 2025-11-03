@@ -21,6 +21,14 @@ public class UiDriver implements Driver {
     private NewOrderPage newOrderPage;
     private OrderHistoryPage orderHistoryPage;
 
+    private Pages currentPage;
+
+    private static enum Pages {
+        NONE,
+        HOME,
+        NEW_ORDER,
+        ORDER_HISTORY
+    }
 
     public UiDriver(String baseUrl) {
         this.client = new UiClient(baseUrl);
@@ -30,11 +38,30 @@ public class UiDriver implements Driver {
     @Override
     public void goToShop() {
         homePage = client.openHomePage();
+        currentPage = Pages.HOME;
+
         newOrderPage = homePage.clickNewOrder();
+    }
+
+    private void ensureOnNewOrderPage() {
+        if(currentPage != Pages.NEW_ORDER) {
+            homePage = client.openHomePage();
+            newOrderPage = homePage.clickNewOrder();
+            currentPage = Pages.NEW_ORDER;
+        }
+    }
+
+    private void ensureOnOrderHistoryPage() {
+        if(currentPage != Pages.ORDER_HISTORY) {
+            homePage = client.openHomePage();
+            orderHistoryPage = homePage.clickOrderHistory();
+            currentPage = Pages.ORDER_HISTORY;
+        }
     }
 
     @Override
     public void placeOrder(String orderNumberAlias, String productId, String quantity) {
+        ensureOnNewOrderPage();
         newOrderPage.inputProductId(productId);
         newOrderPage.inputQuantity(quantity);
         newOrderPage.clickPlaceOrder();
@@ -51,12 +78,14 @@ public class UiDriver implements Driver {
         assertTrue(newOrderPage.getTotalPrice().isPresent(), "Total price should be present after placing order");
         assertTrue(newOrderPage.getTotalPrice().get().compareTo(BigDecimal.ZERO) > 0, "Total price should be positive after placing order");
 
-        var displayOrderNumber = orderHistoryPage.getOrderNumber();
-        assertTrue(displayOrderNumber.startsWith(prefix), "Order number should start with prefix: " + prefix);
+        var displayOrderNumber = newOrderPage.getOrderNumber();
+        assertTrue(displayOrderNumber.isPresent(), "Order number should be present");
+        assertTrue(displayOrderNumber.get().startsWith(prefix), "Order number should start with prefix: " + prefix);
     }
 
     @Override
     public void viewOrderDetails(String orderNumberAlias) {
+        ensureOnOrderHistoryPage();
         var orderNumber = getOrderNumber(orderNumberAlias);
         orderHistoryPage.inputOrderNumber(orderNumber);
         orderHistoryPage.clickSearch();
@@ -65,8 +94,6 @@ public class UiDriver implements Driver {
 
     @Override
     public void confirmOrderDetails(String orderNumberAlias, String productId, String quantity, String status) {
-        orderHistoryPage.waitForOrderDetails();
-
         var orderNumber = getOrderNumber(orderNumberAlias);
         var displayOrderNumber = orderHistoryPage.getOrderNumber();
         assertEquals(orderNumber, displayOrderNumber, "Should display the order number: " + orderNumber);
@@ -87,6 +114,7 @@ public class UiDriver implements Driver {
 
     @Override
     public void cancelOrder(String orderNumberAlias) {
+        viewOrderDetails(orderNumberAlias);
         orderHistoryPage.clickCancelOrder();
     }
 

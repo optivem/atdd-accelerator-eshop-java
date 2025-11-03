@@ -17,12 +17,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UiE2eTest extends BaseE2eTest {
 
-    public UiE2eTest() {
-        super(createDriver());
-    }
-
-    private static Driver createDriver() {
-        var baseUrl = TestConfiguration.getBaseUrl();
+    @Override
+    protected Driver createDriver(String baseUrl) {
         return new UiDriver(baseUrl);
     }
 }

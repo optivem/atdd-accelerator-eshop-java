@@ -10,15 +10,13 @@ import org.junit.jupiter.api.Test;
 abstract class BaseE2eTest {
     private Driver driver;
 
-    public BaseE2eTest(Driver driver) {
-        this.driver = driver;
-    }
-
     @BeforeEach
     void setUp() {
         var baseUrl = TestConfiguration.getBaseUrl();
-        driver = new ApiDriver(baseUrl);
+        driver = createDriver(baseUrl);
     }
+
+    protected abstract Driver createDriver(String baseUrl);
 
     @AfterEach
     void tearDown() throws Exception {
