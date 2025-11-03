@@ -1,6 +1,5 @@
 package com.optivem.atddaccelerator.eshop.systemtest.core.clients.ui.pages;
 
-import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
 import java.util.Optional;
@@ -35,7 +34,7 @@ public class NewOrderPage extends BasePage {
         return confirmationMessage.textContent();
     }
 
-    public void confirmConfirmationMessage() {
+    public void confirmConfirmationMessageShown() {
         var confirmationMessageText = readConfirmationMessageText();
         var matcher = getConfirmationMessageTextMatcher(confirmationMessageText);
         assertTrue(matcher.find(), "Confirmation message should match expected pattern. Actual: " + confirmationMessageText);

@@ -42,9 +42,13 @@ public class ApiDriver implements Driver {
     }
 
     @Override
-    public void confirmOrderCreated(String orderNumberAlias) {
+    public void confirmOrderPlaced(String orderNumberAlias, String prefix) {
         var httpResponse = ordersPlaced.get(orderNumberAlias);
         var response = apiClient.getOrderController().confirmOrderPlacedSuccessfully(httpResponse);
+
+        assertNotNull(response.getOrderNumber(), "Order number should be not be null");
+        assertFalse(response.getOrderNumber().isEmpty(), "Order number should be not be empty");
+        assertTrue(response.getOrderNumber().startsWith(prefix), "Order number should start with prefix: " + prefix);
     }
 
     @Override
@@ -55,44 +59,17 @@ public class ApiDriver implements Driver {
     }
 
     @Override
-    public void confirmOrderDetailsExist(String orderNumberAlias) {
-        var httpResponse = ordersViewed.get(orderNumberAlias);
-        apiClient.getOrderController().confirmOrderViewedSuccessfully(httpResponse);
-    }
-
-    @Override
-    public void confirmOrderDetailsHaveOrderNumber(String orderNumberAlias) {
-        // TODO: VJ: DELETE method fro base
-
-    }
-
-    @Override
-    public void confirmOrderDetailsHaveProductId(String orderNumberAlias, String productId) {
+    public void confirmOrderDetails(String orderNumberAlias, String productId, String quantity, String status) {
         var httpResponse = ordersViewed.get(orderNumberAlias);
         var response = apiClient.getOrderController().confirmOrderViewedSuccessfully(httpResponse);
+
         assertEquals(productId, response.getProductId());
-    }
-
-    @Override
-    public void confirmOrderDetailsHaveQuantity(String orderNumberAlias, String quantity) {
-        var httpResponse = ordersViewed.get(orderNumberAlias);
-        var response = apiClient.getOrderController().confirmOrderViewedSuccessfully(httpResponse);
         assertEquals(quantity, response.getQuantity());
-    }
 
-    @Override
-    public void confirmOrderDetailsHavePositiveUnitPrice(String orderNumberAlias) {
-        var httpResponse = ordersViewed.get(orderNumberAlias);
-        var response = apiClient.getOrderController().confirmOrderViewedSuccessfully(httpResponse);
         assertNotNull(response.getUnitPrice(), "Unit price should not be null");
         var decimalUnitPrice = new BigDecimal(response.getUnitPrice());
         assertTrue(decimalUnitPrice.compareTo(BigDecimal.ZERO) > 0, "Unit price should be positive");
-    }
 
-    @Override
-    public void confirmOrderDetailsHavePositiveTotalPrice(String orderNumberAlias) {
-        var httpResponse = ordersViewed.get(orderNumberAlias);
-        var response = apiClient.getOrderController().confirmOrderViewedSuccessfully(httpResponse);
         assertNotNull(response.getTotalPrice(), "Total price should not be null");
         var decimalTotalPrice = new BigDecimal(response.getTotalPrice());
         assertTrue(decimalTotalPrice.compareTo(BigDecimal.ZERO) > 0, "Total price should be positive");
@@ -116,21 +93,6 @@ public class ApiDriver implements Driver {
     public void confirmOrderCancelled(String orderNumberAlias) {
         var httpResponse = ordersCancelled.get(orderNumberAlias);
         apiClient.getOrderController().confirmOrderCancelledSuccessfully(httpResponse);
-    }
-
-    @Override
-    public void confirmOrderNumberGenerated(String orderNumberAlias) {
-        var httpResponse = ordersPlaced.get(orderNumberAlias);
-        var response = apiClient.getOrderController().confirmOrderPlacedSuccessfully(httpResponse);
-        assertNotNull(response.getOrderNumber(), "Order number should be not be null");
-        assertFalse(response.getOrderNumber().isEmpty(), "Order number should be not be empty");
-    }
-
-    @Override
-    public void confirmOrderNumberStartsWith(String orderNumberAlias, String prefix) {
-        var httpResponse = ordersPlaced.get(orderNumberAlias);
-        var response = apiClient.getOrderController().confirmOrderPlacedSuccessfully(httpResponse);
-        assertTrue(response.getOrderNumber().startsWith(prefix), "Order number should start with prefix: " + prefix);
     }
 
     private static void registerOrderResponse(HashMap<String, HttpResponse<String>> map, String orderNumber, HttpResponse<String> httpResponse) {
