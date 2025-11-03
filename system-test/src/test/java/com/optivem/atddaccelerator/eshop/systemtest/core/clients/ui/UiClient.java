@@ -22,8 +22,6 @@ public class UiClient implements AutoCloseable {
         this.page = browser.newPage();
 
         this.homePage = new HomePage(page, baseUrl);
-
-        page.onDialog(Dialog::accept); // Auto-accept the alert
     }
 
     public HomePage openHomePage() {
