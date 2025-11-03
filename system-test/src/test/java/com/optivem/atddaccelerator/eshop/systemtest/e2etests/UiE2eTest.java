@@ -13,38 +13,19 @@ import java.util.regex.Pattern;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UiE2eTest {
-    
-//    private Playwright playwright;
-//    private Browser browser;
-//    private Page page;
-//    private String baseUrl;
-
     private UiClient uiClient;
 
     @BeforeEach
     void setUp() {
-//        playwright = Playwright.create();
-//        browser = playwright.chromium().launch(new BrowserType.LaunchOptions().setHeadless(true));
-//        page = browser.newPage();
-//        baseUrl = TestConfiguration.getBaseUrl();
-
         var baseUrl = TestConfiguration.getBaseUrl();
         uiClient = new UiClient(baseUrl);
     }
 
     @AfterEach
     void tearDown() {
-//        if (page != null) {
-//            page.close();
-//        }
-//        if (browser != null) {
-//            browser.close();
-//        }
-//        if (playwright != null) {
-//            playwright.close();
-//        }
-
-        uiClient.close();
+        if(uiClient != null) {
+            uiClient.close();
+        }
     }
 
     @Test
@@ -135,7 +116,6 @@ class UiE2eTest {
         orderHistoryPage.clickCancelOrder();
 
         // Assert
-        // orderHistoryPage = viewOrderDetails(orderNumber);
         var displayStatusAfterCancel = orderHistoryPage.getStatus();
         assertEquals("CANCELLED", displayStatusAfterCancel, "Status should be CANCELLED after cancellation");
         orderHistoryPage.confirmCancelButtonNotVisible();

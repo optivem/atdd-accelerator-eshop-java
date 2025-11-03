@@ -2,6 +2,7 @@ package com.optivem.atddaccelerator.eshop.systemtest.smoketests;
 
 import com.optivem.atddaccelerator.eshop.systemtest.TestConfiguration;
 import com.optivem.atddaccelerator.eshop.systemtest.core.clients.api.ApiClient;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,7 +18,15 @@ public class ApiSmokeTest {
 
     @BeforeEach
     void setUp() {
-        this.apiClient = new ApiClient(TestConfiguration.getBaseUrl());
+        var baseUrl = TestConfiguration.getBaseUrl();
+        this.apiClient = new ApiClient(baseUrl);
+    }
+
+    @AfterEach
+    void tearDown() {
+        if (apiClient != null) {
+            apiClient.close();
+        }
     }
 
     @Test

@@ -13,11 +13,12 @@ public class UiSmokeTest {
 
     @BeforeEach
     void setUp() {
-        this.uiClient = new UiClient(TestConfiguration.getBaseUrl());
+        var baseUrl = TestConfiguration.getBaseUrl();
+        this.uiClient = new UiClient(baseUrl);
     }
 
     @AfterEach
-    void tearDown() throws Exception {
+    void tearDown() {
         if (uiClient != null) {
             uiClient.close();
         }

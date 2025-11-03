@@ -20,25 +20,18 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 class ApiE2eTest {
-
-    private static final String BASE_URL = TestConfiguration.getBaseUrl();
-
-    protected static final ObjectMapper objectMapper = new ObjectMapper();
-
-    private HttpClient httpClient;
-
     private ApiClient apiClient;
 
     @BeforeEach
     void setUp() {
-        httpClient = HttpClient.newHttpClient();
-        apiClient = new ApiClient(BASE_URL);
+        var baseUrl = TestConfiguration.getBaseUrl();
+        apiClient = new ApiClient(baseUrl);
     }
 
     @AfterEach
     void tearDown() {
-        if (httpClient != null) {
-            httpClient.close();
+        if (apiClient != null) {
+            apiClient.close();
         }
     }
 
@@ -107,8 +100,4 @@ class ApiE2eTest {
         var httpResponse = apiClient.getOrderController().viewOrder(orderNumber);
         return apiClient.getOrderController().confirmOrderViewedSuccessfully(httpResponse);
     }
-    
-
-    
-
 }
