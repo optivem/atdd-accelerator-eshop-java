@@ -22,7 +22,7 @@ public class ApiSmokeTest {
 
     @Test
     void echo_shouldReturn200OK() throws Exception {
-        var response = apiClient.getEchoController().echo();
-        assertEquals(200, response.statusCode());
+        var httpResponse = apiClient.getEchoController().echo();
+        apiClient.getEchoController().confirmEchoSuccessful(httpResponse);
     }
 }
