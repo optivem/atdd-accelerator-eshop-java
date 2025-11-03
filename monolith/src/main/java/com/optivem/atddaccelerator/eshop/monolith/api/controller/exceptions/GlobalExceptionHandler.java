@@ -1,5 +1,6 @@
 package com.optivem.atddaccelerator.eshop.monolith.api.controller.exceptions;
 
+import com.optivem.atddaccelerator.eshop.monolith.core.exceptions.NotExistValidationException;
 import com.optivem.atddaccelerator.eshop.monolith.core.exceptions.ValidationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +13,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<ErrorResponse> handleValidationException(ValidationException ex) {
         var errorResponse = new ErrorResponse(ex.getMessage());
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errorResponse);
+        return ResponseEntity.unprocessableEntity().body(errorResponse);
+    }
+
+    @ExceptionHandler(NotExistValidationException.class)
+    public ResponseEntity<ErrorResponse> handleNotExistValidationException(NotExistValidationException ex) {
+        return ResponseEntity.notFound().build();
     }
 
     public record ErrorResponse(String message) {}

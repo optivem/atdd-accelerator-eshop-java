@@ -4,15 +4,31 @@ public interface Driver extends AutoCloseable {
 
     void goToShop();
 
-    void placeOrder(String orderNumber, String productId, String quantity);
+    void placeOrder(String orderNumberAlias, String productId, String quantity);
 
-    void confirmOrderCreated(String orderNumber);
+    void confirmOrderCreated(String orderNumberAlias);
 
-    void viewOrderDetails(String orderNumber);
+    void viewOrderDetails(String orderNumberAlias);
 
-    void confirmOrderDetailsExist(String orderNumber);
+    void confirmOrderDetailsExist(String orderNumberAlias);
 
-    void cancelOrder(String orderNumber);
+    void cancelOrder(String orderNumberAlias);
 
-    void confirmOrderCancelled(String orderNumber);
+    void confirmOrderCancelled(String orderNumberAlias);
+
+    void confirmOrderNumberGenerated(String orderNumberAlias);
+
+    void confirmOrderNumberStartsWith(String orderNumberAlias, String prefix);
+
+    void confirmOrderDetailsHaveOrderNumber(String orderNumberAlias);
+
+    void confirmOrderDetailsHaveProductId(String orderNumberAlias, String productId);
+
+    void confirmOrderDetailsHaveQuantity(String orderNumberAlias, String quantity);
+
+    void confirmOrderDetailsHavePositiveUnitPrice(String orderNumberAlias);
+
+    void confirmOrderDetailsHavePositiveTotalPrice(String orderNumberAlias);
+
+    void confirmOrderStatusIsCancelled(String orderNumberAlias);
 }

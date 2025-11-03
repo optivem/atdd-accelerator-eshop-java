@@ -23,34 +23,74 @@ public class UiDriver implements Driver {
     }
 
     @Override
-    public void placeOrder(String orderNumber, String productId, String quantity) {
+    public void placeOrder(String orderNumberAlias, String productId, String quantity) {
         newOrderPage.inputProductId(productId);
         newOrderPage.inputQuantity(quantity);
         newOrderPage.clickPlaceOrder();
     }
 
     @Override
-    public void confirmOrderCreated(String orderNumber) {
+    public void confirmOrderCreated(String orderNumberAlias) {
 
     }
 
     @Override
-    public void viewOrderDetails(String orderNumber) {
+    public void viewOrderDetails(String orderNumberAlias) {
 
     }
 
     @Override
-    public void confirmOrderDetailsExist(String orderNumber) {
+    public void confirmOrderDetailsExist(String orderNumberAlias) {
 
     }
 
     @Override
-    public void cancelOrder(String orderNumber) {
+    public void cancelOrder(String orderNumberAlias) {
 
     }
 
     @Override
-    public void confirmOrderCancelled(String orderNumber) {
+    public void confirmOrderCancelled(String orderNumberAlias) {
+
+    }
+
+    @Override
+    public void confirmOrderNumberGenerated(String orderNumberAlias) {
+
+    }
+
+    @Override
+    public void confirmOrderNumberStartsWith(String orderNumberAlias, String prefix) {
+
+    }
+
+    @Override
+    public void confirmOrderDetailsHaveOrderNumber(String orderNumberAlias) {
+
+    }
+
+    @Override
+    public void confirmOrderDetailsHaveProductId(String orderNumberAlias, String productId) {
+
+    }
+
+    @Override
+    public void confirmOrderDetailsHaveQuantity(String orderNumberAlias, String quantity) {
+
+    }
+
+    @Override
+    public void confirmOrderDetailsHavePositiveUnitPrice(String orderNumberAlias) {
+
+    }
+
+    @Override
+    public void confirmOrderDetailsHavePositiveTotalPrice(String orderNumberAlias) {
+
+    }
+
+    @Override
+    public void confirmOrderStatusIsCancelled(String orderNumberAlias) {
 
     }
 
