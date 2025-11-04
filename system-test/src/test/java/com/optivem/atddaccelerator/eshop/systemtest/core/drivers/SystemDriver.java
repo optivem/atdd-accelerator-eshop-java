@@ -43,38 +43,38 @@ public class SystemDriver implements Driver {
     }
 
     @Override
-    public void placeOrder(String orderNumberAlias, String productId, String quantity) {
-        getActiveDriver().placeOrder(orderNumberAlias, productId, quantity);
+    public void placeOrder(String order, String productId, String quantity) {
+        getActiveDriver().placeOrder(order, productId, quantity);
     }
 
     @Override
-    public void confirmOrderPlaced(String orderNumberAlias, String prefix) {
-        getActiveDriver().confirmOrderPlaced(orderNumberAlias, prefix);
+    public void confirmOrderPlaced(String order, String prefix) {
+        getActiveDriver().confirmOrderPlaced(order, prefix);
     }
 
     @Override
-    public void viewOrderDetails(String orderNumberAlias) {
-        getActiveDriver().viewOrderDetails(orderNumberAlias);
+    public void viewOrderDetails(String order) {
+        getActiveDriver().viewOrderDetails(order);
     }
 
     @Override
-    public void confirmOrderDetails(String orderNumberAlias, String productId, String quantity, String status) {
-        getActiveDriver().confirmOrderDetails(orderNumberAlias, productId, quantity, status);
+    public void confirmOrderDetails(String order, String productId, String quantity, String status) {
+        getActiveDriver().confirmOrderDetails(order, productId, quantity, status);
     }
 
     @Override
-    public void cancelOrder(String orderNumberAlias) {
-        getActiveDriver().cancelOrder(orderNumberAlias);
+    public void cancelOrder(String order) {
+        getActiveDriver().cancelOrder(order);
     }
 
     @Override
-    public void confirmOrderCancelled(String orderNumberAlias) {
-        getActiveDriver().confirmOrderCancelled(orderNumberAlias);
+    public void confirmOrderCancelled(String order) {
+        getActiveDriver().confirmOrderCancelled(order);
     }
 
     @Override
-    public void confirmOrderStatusIsCancelled(String orderNumberAlias) {
-        getActiveDriver().confirmOrderStatusIsCancelled(orderNumberAlias);
+    public void confirmOrderStatusIsCancelled(String order) {
+        getActiveDriver().confirmOrderStatusIsCancelled(order);
     }
 
     @Override

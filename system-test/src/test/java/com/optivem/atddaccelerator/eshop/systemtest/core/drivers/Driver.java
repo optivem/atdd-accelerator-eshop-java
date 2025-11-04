@@ -3,17 +3,17 @@ package com.optivem.atddaccelerator.eshop.systemtest.core.drivers;
 public interface Driver extends AutoCloseable {
     void goToShop();
 
-    void placeOrder(String orderNumberAlias, String productId, String quantity);
+    void placeOrder(String order, String productId, String quantity);
 
-    void confirmOrderPlaced(String orderNumberAlias, String prefix);
+    void confirmOrderPlaced(String order, String prefix);
 
-    void viewOrderDetails(String orderNumberAlias);
+    void viewOrderDetails(String order);
 
-    void confirmOrderDetails(String orderNumberAlias, String productId, String quantity, String status);
+    void confirmOrderDetails(String order, String productId, String quantity, String status);
 
-    void cancelOrder(String orderNumberAlias);
+    void cancelOrder(String order);
 
-    void confirmOrderCancelled(String orderNumberAlias);
+    void confirmOrderCancelled(String order);
 
-    void confirmOrderStatusIsCancelled(String orderNumberAlias);
+    void confirmOrderStatusIsCancelled(String order);
 }

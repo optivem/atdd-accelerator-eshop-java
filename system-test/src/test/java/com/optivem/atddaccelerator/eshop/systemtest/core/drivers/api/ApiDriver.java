@@ -33,17 +33,17 @@ public class ApiDriver implements Driver {
     }
 
     @Override
-    public void placeOrder(String orderNumberAlias, String productId, String quantity) {
+    public void placeOrder(String order, String productId, String quantity) {
         var httpResponse = apiClient.getOrderController().placeOrder(productId, quantity);
-        registerOrderResponse(ordersPlaced, orderNumberAlias, httpResponse);
+        registerOrderResponse(ordersPlaced, order, httpResponse);
 
         var orderNumberOptional = apiClient.getOrderController().getOrderNumberIfOrderPlacedSuccessfully(httpResponse);
-        orderNumberOptional.ifPresent(orderNumber -> registerOrderNumber(orderNumberAlias, orderNumber));
+        orderNumberOptional.ifPresent(orderNumber -> registerOrderNumber(order, orderNumber));
     }
 
     @Override
-    public void confirmOrderPlaced(String orderNumberAlias, String prefix) {
-        var httpResponse = ordersPlaced.get(orderNumberAlias);
+    public void confirmOrderPlaced(String order, String prefix) {
+        var httpResponse = ordersPlaced.get(order);
         var response = apiClient.getOrderController().confirmOrderPlacedSuccessfully(httpResponse);
 
         assertNotNull(response.getOrderNumber(), "Order number should be not be null");
@@ -52,20 +52,20 @@ public class ApiDriver implements Driver {
     }
 
     @Override
-    public void viewOrderDetails(String orderNumberAlias) {
-        var orderNumber = getOrderNumber(orderNumberAlias);
+    public void viewOrderDetails(String order) {
+        var orderNumber = getOrderNumber(order);
         var httpResponse = apiClient.getOrderController().viewOrder(orderNumber);
-        registerOrderResponse(ordersViewed, orderNumberAlias, httpResponse);
+        registerOrderResponse(ordersViewed, order, httpResponse);
     }
 
     @Override
-    public void confirmOrderDetails(String orderNumberAlias, String productId, String quantity, String status) {
+    public void confirmOrderDetails(String order, String productId, String quantity, String status) {
         // Fetch order details if not already viewed
-        if (!ordersViewed.containsKey(orderNumberAlias)) {
-            viewOrderDetails(orderNumberAlias);
+        if (!ordersViewed.containsKey(order)) {
+            viewOrderDetails(order);
         }
 
-        var httpResponse = ordersViewed.get(orderNumberAlias);
+        var httpResponse = ordersViewed.get(order);
         var response = apiClient.getOrderController().confirmOrderViewedSuccessfully(httpResponse);
 
         assertEquals(Long.parseLong(productId), response.getProductId());
@@ -81,27 +81,27 @@ public class ApiDriver implements Driver {
     }
 
     @Override
-    public void confirmOrderStatusIsCancelled(String orderNumberAlias) {
+    public void confirmOrderStatusIsCancelled(String order) {
         // Fetch order details if not already viewed
-        if (!ordersViewed.containsKey(orderNumberAlias)) {
-            viewOrderDetails(orderNumberAlias);
+        if (!ordersViewed.containsKey(order)) {
+            viewOrderDetails(order);
         }
 
-        var httpResponse = ordersViewed.get(orderNumberAlias);
+        var httpResponse = ordersViewed.get(order);
         var response = apiClient.getOrderController().confirmOrderViewedSuccessfully(httpResponse);
         assertEquals("CANCELLED", response.getStatus(), "Order status should be CANCELLED");
     }
 
     @Override
-    public void cancelOrder(String orderNumberAlias) {
-        var orderNumber = getOrderNumber(orderNumberAlias);
+    public void cancelOrder(String order) {
+        var orderNumber = getOrderNumber(order);
         var httpResponse = apiClient.getOrderController().cancelOrder(orderNumber);
-        registerOrderResponse(ordersCancelled, orderNumberAlias, httpResponse);
+        registerOrderResponse(ordersCancelled, order, httpResponse);
     }
 
     @Override
-    public void confirmOrderCancelled(String orderNumberAlias) {
-        var httpResponse = ordersCancelled.get(orderNumberAlias);
+    public void confirmOrderCancelled(String order) {
+        var httpResponse = ordersCancelled.get(order);
         apiClient.getOrderController().confirmOrderCancelledSuccessfully(httpResponse);
     }
 
@@ -113,20 +113,20 @@ public class ApiDriver implements Driver {
         map.put(orderNumber, httpResponse);
     }
 
-    private void registerOrderNumber(String orderNumberAlias, String orderNumber) {
-        if(orderNumbers.containsKey(orderNumberAlias)) {
-            throw new IllegalStateException("Order number alias " + orderNumberAlias + " is already registered.");
+    private void registerOrderNumber(String order, String orderNumber) {
+        if(orderNumbers.containsKey(order)) {
+            throw new IllegalStateException("Order number alias " + order + " is already registered.");
         }
 
-        orderNumbers.put(orderNumberAlias, orderNumber);
+        orderNumbers.put(order, orderNumber);
     }
 
-    private String getOrderNumber(String orderNumberAlias) {
-        if(!orderNumbers.containsKey(orderNumberAlias)) {
-            throw new IllegalStateException("Order number alias " + orderNumberAlias + " is not registered.");
+    private String getOrderNumber(String order) {
+        if(!orderNumbers.containsKey(order)) {
+            throw new IllegalStateException("Order number alias " + order + " is not registered.");
         }
 
-        return orderNumbers.get(orderNumberAlias);
+        return orderNumbers.get(order);
     }
 
     @Override

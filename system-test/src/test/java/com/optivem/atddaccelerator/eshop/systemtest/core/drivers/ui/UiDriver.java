@@ -60,7 +60,7 @@ public class UiDriver implements Driver {
     }
 
     @Override
-    public void placeOrder(String orderNumberAlias, String productId, String quantity) {
+    public void placeOrder(String order, String productId, String quantity) {
         ensureOnNewOrderPage();
         newOrderPage.inputProductId(productId);
         newOrderPage.inputQuantity(quantity);
@@ -68,11 +68,11 @@ public class UiDriver implements Driver {
 
         var orderNumberOptional = newOrderPage.getOrderNumber();
 
-        orderNumberOptional.ifPresent(orderNumber -> registerOrderNumber(orderNumberAlias, orderNumber));
+        orderNumberOptional.ifPresent(orderNumber -> registerOrderNumber(order, orderNumber));
     }
 
     @Override
-    public void confirmOrderPlaced(String orderNumberAlias, String prefix) {
+    public void confirmOrderPlaced(String order, String prefix) {
         newOrderPage.confirmConfirmationMessageShown();
         assertTrue(newOrderPage.getOrderNumber().isPresent(), "Order number should be present after placing order");
         assertTrue(newOrderPage.getTotalPrice().isPresent(), "Total price should be present after placing order");
@@ -84,17 +84,17 @@ public class UiDriver implements Driver {
     }
 
     @Override
-    public void viewOrderDetails(String orderNumberAlias) {
+    public void viewOrderDetails(String order) {
         ensureOnOrderHistoryPage();
-        var orderNumber = getOrderNumber(orderNumberAlias);
+        var orderNumber = getOrderNumber(order);
         orderHistoryPage.inputOrderNumber(orderNumber);
         orderHistoryPage.clickSearch();
         orderHistoryPage.waitForOrderDetails();
     }
 
     @Override
-    public void confirmOrderDetails(String orderNumberAlias, String productId, String quantity, String status) {
-        var orderNumber = getOrderNumber(orderNumberAlias);
+    public void confirmOrderDetails(String order, String productId, String quantity, String status) {
+        var orderNumber = getOrderNumber(order);
         var displayOrderNumber = orderHistoryPage.getOrderNumber();
         assertEquals(orderNumber, displayOrderNumber, "Should display the order number: " + orderNumber);
 
@@ -113,37 +113,37 @@ public class UiDriver implements Driver {
 
 
     @Override
-    public void cancelOrder(String orderNumberAlias) {
-        viewOrderDetails(orderNumberAlias);
+    public void cancelOrder(String order) {
+        viewOrderDetails(order);
         orderHistoryPage.clickCancelOrder();
     }
 
     @Override
-    public void confirmOrderCancelled(String orderNumberAlias) {
+    public void confirmOrderCancelled(String order) {
         var displayStatusAfterCancel = orderHistoryPage.getStatus();
         assertEquals("CANCELLED", displayStatusAfterCancel, "Status should be CANCELLED after cancellation");
         orderHistoryPage.confirmCancelButtonNotVisible();
     }
 
     @Override
-    public void confirmOrderStatusIsCancelled(String orderNumberAlias) {
+    public void confirmOrderStatusIsCancelled(String order) {
         var displayStatusAfterCancel = orderHistoryPage.getStatus();
         assertEquals("CANCELLED", displayStatusAfterCancel, "Status should be CANCELLED after cancellation");
         orderHistoryPage.confirmCancelButtonNotVisible();
     }
 
-    private void registerOrderNumber(String orderNumberAlias, String orderNumber) {
-        if(orderNumbers.containsKey(orderNumberAlias)) {
-            throw new IllegalStateException("Order number alias already registered: " + orderNumberAlias);
+    private void registerOrderNumber(String order, String orderNumber) {
+        if(orderNumbers.containsKey(order)) {
+            throw new IllegalStateException("Order number alias already registered: " + order);
         }
 
-        orderNumbers.put(orderNumberAlias, orderNumber);
+        orderNumbers.put(order, orderNumber);
     }
 
-    private String getOrderNumber(String orderNumberAlias) {
-        var orderNumber = orderNumbers.get(orderNumberAlias);
+    private String getOrderNumber(String order) {
+        var orderNumber = orderNumbers.get(order);
         if(orderNumber == null) {
-            throw new IllegalStateException("Order number alias not registered: " + orderNumberAlias);
+            throw new IllegalStateException("Order number alias not registered: " + order);
         }
 
         return orderNumber;
