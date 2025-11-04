@@ -13,19 +13,13 @@ public class SystemDriver implements Driver {
 
     private Driver cachedActiveDriver;
 
-    public static SystemDriver create(String baseUrl) {
+    public SystemDriver(String baseUrl) {
         var uiDriver = new UiDriver(baseUrl);
         var apiDriver = new ApiDriver(baseUrl);
 
-        var drivers = new HashMap<String, Driver>();
-        drivers.put(ChannelType.UI, uiDriver);
-        drivers.put(ChannelType.API, apiDriver);
-
-        return new SystemDriver(drivers);
-    }
-
-    private SystemDriver(HashMap<String, Driver> drivers) {
-        this.drivers = drivers;
+        this.drivers = new HashMap<>();
+        this.drivers.put(ChannelType.UI, uiDriver);
+        this.drivers.put(ChannelType.API, apiDriver);
     }
 
     private Driver getActiveDriver() {

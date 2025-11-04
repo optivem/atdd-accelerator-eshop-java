@@ -8,17 +8,10 @@ public class ShopDsl implements AutoCloseable {
     private final DslParamsFactory paramsFactory;
     private final SystemDriver driver;
 
-    public static ShopDsl create(String baseUrl) {
-        var driver = SystemDriver.create(baseUrl);
+    public ShopDsl(String baseUrl) {
+        this.driver = new SystemDriver(baseUrl);
         var context = new DslContext();
-        var paramsFactory = new DslParamsFactory(context);
-        return new ShopDsl(paramsFactory, driver);
-    }
-
-    private ShopDsl(DslParamsFactory paramsFactory, SystemDriver driver) {
-
-        this.paramsFactory = paramsFactory;
-        this.driver = driver;
+        this.paramsFactory = new DslParamsFactory(context);
     }
 
     public void goToShop() {

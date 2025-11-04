@@ -17,7 +17,7 @@ public class SmokeTest {
     @BeforeEach
     void setUp() {
         var baseUrl = TestConfiguration.getBaseUrl();
-        shop = ShopDsl.create(baseUrl);
+        shop = new ShopDsl(baseUrl);
     }
 
     @AfterEach
