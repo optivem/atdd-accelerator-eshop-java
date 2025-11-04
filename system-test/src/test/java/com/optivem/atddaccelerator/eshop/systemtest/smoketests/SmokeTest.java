@@ -34,7 +34,6 @@ public class SmokeTest {
     @Channel({ChannelType.UI, ChannelType.API})
     @TestTemplate
     void shouldBeAbleToGoToShop() {
-        driver = driverFactory.createDriver();
         driver.goToShop();
     }
 }
