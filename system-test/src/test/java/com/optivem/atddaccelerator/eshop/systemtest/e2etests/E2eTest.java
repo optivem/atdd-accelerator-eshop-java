@@ -1,22 +1,27 @@
 package com.optivem.atddaccelerator.eshop.systemtest.e2etests;
 
 import com.optivem.atddaccelerator.eshop.systemtest.TestConfiguration;
+import com.optivem.atdd.commons.channels.Channel;
+import com.optivem.atdd.commons.channels.ChannelExtension;
+import com.optivem.atddaccelerator.eshop.systemtest.core.drivers.ChannelType;
 import com.optivem.atddaccelerator.eshop.systemtest.core.drivers.Driver;
-import com.optivem.atddaccelerator.eshop.systemtest.core.drivers.api.ApiDriver;
+import com.optivem.atddaccelerator.eshop.systemtest.core.drivers.DriverFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestTemplate;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-abstract class BaseE2eTest {
+@ExtendWith(ChannelExtension.class)
+public class E2eTest {
     private Driver driver;
 
     @BeforeEach
     void setUp() {
         var baseUrl = TestConfiguration.getBaseUrl();
-        driver = createDriver(baseUrl);
+        var driverFactory = new DriverFactory(baseUrl);
+        driver = driverFactory.createDriver();
     }
-
-    protected abstract Driver createDriver(String baseUrl);
 
     @AfterEach
     void tearDown() throws Exception {
@@ -25,8 +30,9 @@ abstract class BaseE2eTest {
         }
     }
 
-    @Test
-    void placeOrder_shouldReturnOrderNumber() throws Exception {
+    @Channel({ChannelType.UI, ChannelType.API})
+    @TestTemplate
+    void placeOrder_shouldReturnOrderNumber() {
         // Arrange
         var orderNumberAlias = "ORD-1001";
         var productId = "10";
@@ -39,8 +45,9 @@ abstract class BaseE2eTest {
         driver.confirmOrderPlaced(orderNumberAlias, "ORD-");
     }
 
-    @Test
-    void getOrder_shouldReturnOrderDetails() throws Exception {
+    @Channel({ChannelType.UI, ChannelType.API})
+    @TestTemplate
+    void getOrder_shouldReturnOrderDetails() {
         // Arrange
         var orderNumberAlias = "ORD-1002";
         var productId = "11";
@@ -54,7 +61,8 @@ abstract class BaseE2eTest {
         driver.confirmOrderDetails(orderNumberAlias, productId, quantity, "PLACED");
     }
 
-    @Test
+    @Channel({ChannelType.UI, ChannelType.API})
+    @TestTemplate
     void cancelOrder_shouldSetStatusToCancelled() {
         // Arrange
         var orderNumberAlias = "ORD-1003";
