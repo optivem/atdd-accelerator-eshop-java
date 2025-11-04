@@ -60,6 +60,11 @@ public class ApiDriver implements Driver {
 
     @Override
     public void confirmOrderDetails(String orderNumberAlias, String productId, String quantity, String status) {
+        // Fetch order details if not already viewed
+        if (!ordersViewed.containsKey(orderNumberAlias)) {
+            viewOrderDetails(orderNumberAlias);
+        }
+
         var httpResponse = ordersViewed.get(orderNumberAlias);
         var response = apiClient.getOrderController().confirmOrderViewedSuccessfully(httpResponse);
 
@@ -77,6 +82,11 @@ public class ApiDriver implements Driver {
 
     @Override
     public void confirmOrderStatusIsCancelled(String orderNumberAlias) {
+        // Fetch order details if not already viewed
+        if (!ordersViewed.containsKey(orderNumberAlias)) {
+            viewOrderDetails(orderNumberAlias);
+        }
+
         var httpResponse = ordersViewed.get(orderNumberAlias);
         var response = apiClient.getOrderController().confirmOrderViewedSuccessfully(httpResponse);
         assertEquals("CANCELLED", response.getStatus(), "Order status should be CANCELLED");

@@ -29,26 +29,30 @@ public class E2eTest {
 
     @Channel({ChannelType.UI, ChannelType.API})
     @TestTemplate
-    void placeOrder_shouldReturnOrderNumber() {
-        shop.placeOrder("orderNumber: ORD-1001", "productId: 10", "quantity: 5");
-        shop.confirmOrderPlaced("orderNumber: ORD-1001", "orderNumberSuffix: ORD-");
+    void shouldGenerateOrderNumberWhenPlacingOrder() {
+        shop.placeOrder("order: order1", "productId: 10", "quantity: 5");
+
+        shop.confirmOrderPlaced("order: order1", "orderNumberPrefix: ORD-");
     }
 
     @Channel({ChannelType.UI, ChannelType.API})
     @TestTemplate
-    void getOrder_shouldReturnOrderDetails() {
-        shop.placeOrder("orderNumber: ORD-1001", "productId: 11", "quantity: 3");
-        shop.viewOrderDetails("orderNumber: ORD-1001");
-        shop.confirmOrderDetails("orderNumber: ORD-1001", "productId: 11", "quantity: 3", "status: PLACED");
+    void shouldRetainOrderDetailsAfterPlacement() {
+        shop.placeOrder("order: order1", "productId: 11", "quantity: 3");
+
+        shop.viewOrderDetails("order: order1");
+
+        shop.confirmOrderDetails("order: order1", "productId: 11", "quantity: 3", "status: PLACED");
     }
 
     @Channel({ChannelType.UI, ChannelType.API})
     @TestTemplate
-    void cancelOrder_shouldSetStatusToCancelled() {
-        shop.placeOrder("orderNumber: ORD-1003", "productId: 12", "quantity: 2");
-        shop.cancelOrder("orderNumber: ORD-1003");
-        shop.confirmOrderCancelled("orderNumber: ORD-1003");
-        shop.viewOrderDetails("orderNumber: ORD-1003");
-        shop.confirmOrderStatusIsCancelled("orderNumber: ORD-1003");
+    void shouldAllowCancellingPlacedOrder() {
+        shop.placeOrder("order: order1", "productId: 12", "quantity: 2");
+
+        shop.cancelOrder("order: order1");
+
+        shop.confirmOrderCancelled("order: order1");
+        shop.confirmOrderStatusIsCancelled("order: order1");
     }
 }
