@@ -25,49 +25,49 @@ public class ShopDsl implements AutoCloseable {
 
     public void placeOrder(String... args) {
         var params = paramsFactory.create(args);
-        var orderNumber = params.getAlias("order");
+        var order = params.getAlias("order");
         var productId = params.getValue("productId", "1");
         var quantity = params.getValue("quantity", "20");
-        driver.placeOrder(orderNumber, productId, quantity);
+        driver.placeOrder(order, productId, quantity);
     }
 
     public void confirmOrderPlaced(String... args) {
         var params = paramsFactory.create(args);
-        var orderNumber = params.getAlias("order");
+        var order = params.getAlias("order");
         var prefix = params.getValue("orderNumberPrefix", "");
-        driver.confirmOrderPlaced(orderNumber, prefix);
+        driver.confirmOrderPlaced(order, prefix);
     }
 
     public void viewOrderDetails(String... args) {
         var params = paramsFactory.create(args);
-        var orderNumber = params.getAlias("order");
-        driver.viewOrderDetails(orderNumber);
+        var order = params.getAlias("order");
+        driver.viewOrderDetails(order);
     }
 
     public void confirmOrderDetails(String... args) {
         var params = paramsFactory.create(args);
-        var orderNumber = params.getAlias("order");
+        var order = params.getAlias("order");
         var productId = params.getValue("productId", "1");
         var quantity = params.getValue("quantity", "20");
         var status = params.getValue("status", "PLACED");
-        driver.confirmOrderDetails(orderNumber, productId, quantity, status);
+        driver.confirmOrderDetails(order, productId, quantity, status);
     }
 
     public void cancelOrder(String... args) {
         var params = paramsFactory.create(args);
-        var orderNumber = params.getAlias("order");
-        driver.cancelOrder(orderNumber);
+        var order = params.getAlias("order");
+        driver.cancelOrder(order);
     }
 
     public void confirmOrderCancelled(String... args) {
         var params = paramsFactory.create(args);
-        var orderNumber = params.getAlias("order");
-        driver.confirmOrderCancelled(orderNumber);
+        var order = params.getAlias("order");
+        driver.confirmOrderCancelled(order);
     }
 
     public void confirmOrderStatusIsCancelled(String... args) {
         var params = paramsFactory.create(args);
-        var orderNumber = params.getAlias("order");
-        driver.confirmOrderStatusIsCancelled(orderNumber);
+        var order = params.getAlias("order");
+        driver.confirmOrderStatusIsCancelled(order);
     }
 }
