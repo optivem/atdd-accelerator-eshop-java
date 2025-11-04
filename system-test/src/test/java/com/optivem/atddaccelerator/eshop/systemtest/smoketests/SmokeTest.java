@@ -1,5 +1,6 @@
 package com.optivem.atddaccelerator.eshop.systemtest.smoketests;
 
+import com.optivem.atdd.commons.MathCommons;
 import com.optivem.atddaccelerator.eshop.systemtest.TestConfiguration;
 import com.optivem.atddaccelerator.eshop.systemtest.commons.channels.Channel;
 import com.optivem.atddaccelerator.eshop.systemtest.commons.channels.ChannelExtension;
@@ -11,6 +12,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(ChannelExtension.class)
 public class SmokeTest {
@@ -35,4 +38,14 @@ public class SmokeTest {
     void shouldBeAbleToGoToShop() {
         driver.goToShop();
     }
+
+
+    @Channel({ChannelType.UI, ChannelType.API})
+    @TestTemplate
+    void shouldPerformMathAddition() {
+        int result = MathCommons.addition(5, 3);
+        System.out.println("Result: " + result); // Output: Result: 8
+        assertEquals(8, result, "Expected 5 + 3 to equal 8");
+    }
+
 }
