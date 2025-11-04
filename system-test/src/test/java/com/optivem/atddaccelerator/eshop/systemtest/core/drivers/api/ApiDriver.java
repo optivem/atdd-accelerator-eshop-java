@@ -78,6 +78,8 @@ public class ApiDriver implements Driver {
         var totalPrice = response.getTotalPrice();
         assertNotNull(totalPrice, "Total price should not be null");
         assertTrue(totalPrice.compareTo(BigDecimal.ZERO) > 0, "Total price should be positive");
+
+        assertEquals(status, response.getStatus(), "Order status should be: " + status);
     }
 
     @Override

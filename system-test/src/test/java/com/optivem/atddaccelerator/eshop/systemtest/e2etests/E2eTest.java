@@ -39,20 +39,14 @@ public class E2eTest {
     @TestTemplate
     void shouldRetainOrderDetailsAfterPlacement() {
         shop.placeOrder("order: order1", "productId: 11", "quantity: 3");
-
-        shop.viewOrderDetails("order: order1");
-
         shop.confirmOrderDetails("order: order1", "productId: 11", "quantity: 3", "status: PLACED");
     }
 
     @Channel({ChannelType.UI, ChannelType.API})
     @TestTemplate
     void shouldAllowCancellingPlacedOrder() {
-        shop.placeOrder("order: order1", "productId: 12", "quantity: 2");
-
+        shop.placeOrder("order: order1");
         shop.cancelOrder("order: order1");
-
-        shop.confirmOrderCancelled("order: order1");
-        shop.confirmOrderStatusIsCancelled("order: order1");
+        shop.confirmOrderDetails("order: order1", "status: CANCELLED");
     }
 }

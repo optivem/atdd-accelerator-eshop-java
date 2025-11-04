@@ -94,6 +94,11 @@ public class UiDriver implements Driver {
 
     @Override
     public void confirmOrderDetails(String order, String productId, String quantity, String status) {
+        // Navigate to order details if not already there
+        if (orderHistoryPage == null) {
+            viewOrderDetails(order);
+        }
+
         var orderNumber = getOrderNumber(order);
         var displayOrderNumber = orderHistoryPage.getOrderNumber();
         assertEquals(orderNumber, displayOrderNumber, "Should display the order number: " + orderNumber);
@@ -109,6 +114,9 @@ public class UiDriver implements Driver {
 
         var displayTotalPrice = orderHistoryPage.getTotalPrice();
         assertTrue(displayTotalPrice.compareTo(BigDecimal.ZERO) > 0, "Total price should be positive");
+
+        var displayStatus = orderHistoryPage.getStatus();
+        assertEquals(status, displayStatus, "Should display status: " + status);
     }
 
 
@@ -127,6 +135,11 @@ public class UiDriver implements Driver {
 
     @Override
     public void confirmOrderStatusIsCancelled(String order) {
+        // Navigate to order details if not already there
+        if (orderHistoryPage == null) {
+            viewOrderDetails(order);
+        }
+
         var displayStatusAfterCancel = orderHistoryPage.getStatus();
         assertEquals("CANCELLED", displayStatusAfterCancel, "Status should be CANCELLED after cancellation");
         orderHistoryPage.confirmCancelButtonNotVisible();
