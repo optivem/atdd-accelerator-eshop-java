@@ -1,7 +1,6 @@
 package com.optivem.atddaccelerator.eshop.systemtest.core.drivers;
 
 public interface Driver extends AutoCloseable {
-
     void goToShop();
 
     void placeOrder(String orderNumberAlias, String productId, String quantity);

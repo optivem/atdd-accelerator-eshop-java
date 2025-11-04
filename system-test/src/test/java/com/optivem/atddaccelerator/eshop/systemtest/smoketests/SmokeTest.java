@@ -4,38 +4,33 @@ import com.optivem.atddaccelerator.eshop.systemtest.TestConfiguration;
 import com.optivem.atdd.commons.channels.Channel;
 import com.optivem.atdd.commons.channels.ChannelExtension;
 import com.optivem.atddaccelerator.eshop.systemtest.core.drivers.ChannelType;
-import com.optivem.atddaccelerator.eshop.systemtest.core.drivers.Driver;
-import com.optivem.atddaccelerator.eshop.systemtest.core.drivers.DriverFactory;
+import com.optivem.atddaccelerator.eshop.systemtest.core.dsl.ShopDsl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @ExtendWith(ChannelExtension.class)
 public class SmokeTest {
-    private Driver driver;
+    private ShopDsl shop;
 
     @BeforeEach
     void setUp() {
         var baseUrl = TestConfiguration.getBaseUrl();
-        var driverFactory = new DriverFactory(baseUrl);
-        driver = driverFactory.createDriver();
+        shop = ShopDsl.create(baseUrl);
     }
 
     @AfterEach
     void tearDown() throws Exception {
-        if (driver != null) {
-            driver.close();
+        if (shop != null) {
+            shop.close();
         }
     }
 
     @Channel({ChannelType.UI, ChannelType.API})
     @TestTemplate
     void shouldBeAbleToGoToShop() {
-        driver.goToShop();
+        shop.goToShop();
     }
 
 }
