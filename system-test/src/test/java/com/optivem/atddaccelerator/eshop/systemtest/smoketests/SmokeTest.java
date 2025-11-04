@@ -14,14 +14,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(ChannelExtension.class)
 public class SmokeTest {
-    private DriverFactory driverFactory;
     private Driver driver;
 
     @BeforeEach
     void setUp() {
         var baseUrl = TestConfiguration.getBaseUrl();
-        this.driverFactory = new DriverFactory(baseUrl);
-        this.driver = driverFactory.createDriver();
+        var driverFactory = new DriverFactory(baseUrl);
+        driver = driverFactory.createDriver();
     }
 
     @AfterEach

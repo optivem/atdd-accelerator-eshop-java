@@ -17,10 +17,6 @@ public class DriverFactory {
     public Driver createDriver() {
         var channelType = ChannelContext.get();
 
-        if(channelType == null) {
-            throw new RuntimeException("Channel type is not set. Please ensure that the test class is annotated with @ExtendWith(ChannelExtension.class)");
-        }
-
         if(Objects.equals(channelType, ChannelType.UI)) {
             return new UiDriver(baseUrl);
         }

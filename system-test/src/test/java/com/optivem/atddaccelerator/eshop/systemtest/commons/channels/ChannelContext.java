@@ -10,7 +10,13 @@ public class ChannelContext {
     }
 
     public static String get() {
-        return current.get();
+        var channel = current.get();
+
+        if(channel == null) {
+            throw new RuntimeException("Channel type is not set. Please ensure that the test class is annotated with @ExtendWith(ChannelExtension.class) and that test methods are annotated with @Channel and @TestTemplate");
+        }
+
+        return channel;
     }
 
     public static void clear() {
