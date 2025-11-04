@@ -52,4 +52,11 @@ public class ShopDsl implements AutoCloseable {
         var order = params.getAlias("order");
         driver.cancelOrder(order);
     }
+
+    public void confirmOrderPlacementFailed(String... args) {
+        var params = paramsFactory.create(args);
+        var order = params.getAlias("order");
+        var errorMessage = params.getValue("errorMessage", "");
+        driver.confirmOrderPlacementFailed(order, errorMessage);
+    }
 }

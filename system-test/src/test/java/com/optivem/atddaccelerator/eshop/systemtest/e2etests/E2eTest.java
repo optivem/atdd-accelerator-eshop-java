@@ -7,6 +7,7 @@ import com.optivem.atddaccelerator.eshop.systemtest.core.drivers.ChannelType;
 import com.optivem.atddaccelerator.eshop.systemtest.core.dsl.ShopDsl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -54,5 +55,13 @@ public class E2eTest {
         shop.placeOrder("order: order1");
         shop.cancelOrder("order: order1");
         shop.confirmOrderDetails("order: order1", "status: CANCELLED");
+    }
+
+    @Disabled
+    @Channel({ChannelType.UI, ChannelType.API})
+    @TestTemplate
+    void shouldRejectOrderWithNegativeQuantity() {
+        shop.placeOrder("order: order1", "productId: 10", "quantity: -5");
+        shop.confirmOrderPlacementFailed("order: order1", "errorMessage: Quantity must be positive");
     }
 }

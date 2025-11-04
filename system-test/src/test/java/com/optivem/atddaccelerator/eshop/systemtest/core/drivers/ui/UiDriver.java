@@ -145,6 +145,16 @@ public class UiDriver implements Driver {
         orderHistoryPage.confirmCancelButtonNotVisible();
     }
 
+
+    @Override
+    public void confirmOrderPlacementFailed(String order, String errorMessage) {
+        // For UI driver, check if the confirmation page shows an error message
+        // or if we're still on the new order page with an error displayed
+        var pageErrorMessage = newOrderPage.readConfirmationMessageText();
+        assertTrue(pageErrorMessage.contains(errorMessage),
+                   "Expected error message to contain: " + errorMessage + ", but got: " + pageErrorMessage);
+    }
+
     private void registerOrderNumber(String order, String orderNumber) {
         if(orderNumbers.containsKey(order)) {
             throw new IllegalStateException("Order number alias already registered: " + order);

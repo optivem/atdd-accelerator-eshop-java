@@ -107,6 +107,22 @@ public class ApiDriver implements Driver {
         apiClient.getOrderController().confirmOrderCancelledSuccessfully(httpResponse);
     }
 
+
+    @Override
+    public void confirmOrderPlacementFailed(String order, String errorMessage) {
+        var httpResponse = ordersPlaced.get(order);
+        assertNotNull(httpResponse, "Order placement response should exist");
+
+        // Check that the HTTP response indicates unprocessable entity (422)
+        assertEquals(422, httpResponse.statusCode(),
+                   "Expected 422 Unprocessable Entity status code, but got: " + httpResponse.statusCode());
+
+        // Check that the error message contains the expected text
+        var responseBody = httpResponse.body();
+        assertTrue(responseBody.contains(errorMessage),
+                   "Expected error message to contain: " + errorMessage + ", but got: " + responseBody);
+    }
+
     private static void registerOrderResponse(HashMap<String, HttpResponse<String>> map, String orderNumber, HttpResponse<String> httpResponse) {
         if(map.containsKey(orderNumber)) {
             throw new IllegalStateException("Response for order number " + orderNumber + " is already registered.");

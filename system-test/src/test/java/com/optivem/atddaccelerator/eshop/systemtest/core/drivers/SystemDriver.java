@@ -78,6 +78,11 @@ public class SystemDriver implements Driver {
     }
 
     @Override
+    public void confirmOrderPlacementFailed(String order, String errorMessage) {
+        getActiveDriver().confirmOrderPlacementFailed(order, errorMessage);
+    }
+
+    @Override
     public void close() throws Exception {
         Exception firstEx = null;
 

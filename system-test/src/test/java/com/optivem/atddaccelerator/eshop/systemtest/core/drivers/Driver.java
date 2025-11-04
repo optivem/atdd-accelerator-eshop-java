@@ -16,4 +16,7 @@ public interface Driver extends AutoCloseable {
     void confirmOrderCancelled(String order);
 
     void confirmOrderStatusIsCancelled(String order);
+
+
+    void confirmOrderPlacementFailed(String order, String errorMessage);
 }
