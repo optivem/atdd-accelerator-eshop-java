@@ -4,78 +4,63 @@ import com.optivem.atddaccelerator.eshop.systemtest.TestConfiguration;
 import com.optivem.atdd.commons.channels.Channel;
 import com.optivem.atdd.commons.channels.ChannelExtension;
 import com.optivem.atddaccelerator.eshop.systemtest.core.drivers.ChannelType;
-import com.optivem.atddaccelerator.eshop.systemtest.core.drivers.Driver;
-import com.optivem.atddaccelerator.eshop.systemtest.core.drivers.DriverFactory;
+import com.optivem.atddaccelerator.eshop.systemtest.core.dsl.ShopDsl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.ExtendWith;
 
 @ExtendWith(ChannelExtension.class)
 public class E2eTest {
-    private Driver driver;
+    private ShopDsl shop;
 
     @BeforeEach
     void setUp() {
         var baseUrl = TestConfiguration.getBaseUrl();
-        var driverFactory = new DriverFactory(baseUrl);
-        driver = driverFactory.createDriver();
+        shop = new ShopDsl(baseUrl);
     }
 
     @AfterEach
     void tearDown() throws Exception {
-        if (driver != null) {
-            driver.close();
+        if (shop != null) {
+            shop.close();
         }
     }
 
     @Channel({ChannelType.UI, ChannelType.API})
     @TestTemplate
-    void placeOrder_shouldReturnOrderNumber() {
-        // Arrange
-        var orderNumberAlias = "ORD-1001";
-        var productId = "10";
-        var quantity = "5";
-
-        // Act
-        driver.placeOrder(orderNumberAlias, productId, quantity);
-
-        // Assert
-        driver.confirmOrderPlaced(orderNumberAlias, "ORD-");
+    void shouldGenerateOrderNumberWithPrefix() {
+        shop.placeOrder("order: order1");
+        shop.confirmOrderDetails("order: order1", "orderNumberPrefix: ORD-");
     }
 
     @Channel({ChannelType.UI, ChannelType.API})
     @TestTemplate
-    void getOrder_shouldReturnOrderDetails() {
-        // Arrange
-        var orderNumberAlias = "ORD-1002";
-        var productId = "11";
-        var quantity = "3";
-        driver.placeOrder(orderNumberAlias, productId, quantity);
-
-        // Act
-        driver.viewOrderDetails(orderNumberAlias);
-
-        // Assert
-        driver.confirmOrderDetails(orderNumberAlias, productId, quantity, "PLACED");
+    void shouldRetainOrderDetailsAfterPlacement() {
+        shop.placeOrder("order: order1", "productId: 11", "quantity: 3");
+        shop.confirmOrderDetails("order: order1", "productId: 11", "quantity: 3");
     }
 
     @Channel({ChannelType.UI, ChannelType.API})
     @TestTemplate
-    void cancelOrder_shouldSetStatusToCancelled() {
-        // Arrange
-        var orderNumberAlias = "ORD-1003";
-        var productId = "12";
-        var quantity = "2";
-        driver.placeOrder(orderNumberAlias, productId, quantity);
+    void shouldHaveInitialStatusPlaced() {
+        shop.placeOrder("order: order1");
+        shop.confirmOrderDetails("order: order1", "status: PLACED");
+    }
 
-        // Act
-        driver.cancelOrder(orderNumberAlias);
+    @Channel({ChannelType.UI, ChannelType.API})
+    @TestTemplate
+    void shouldAllowCancellingPlacedOrder() {
+        shop.placeOrder("order: order1");
+        shop.cancelOrder("order: order1");
+        shop.confirmOrderDetails("order: order1", "status: CANCELLED");
+    }
 
-        // Assert
-        driver.confirmOrderCancelled(orderNumberAlias);
-        driver.viewOrderDetails(orderNumberAlias);
-        driver.confirmOrderStatusIsCancelled(orderNumberAlias);
+    @Channel({ChannelType.UI, ChannelType.API})
+    @TestTemplate
+    void shouldRejectOrderWithNegativeQuantity() {
+        shop.placeOrder("order: order1", "productId: 10", "quantity: -5");
+        shop.confirmOrderPlacementFailed("order: order1", "errorMessage: Quantity must be positive");
     }
 }
