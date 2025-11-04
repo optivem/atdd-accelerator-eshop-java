@@ -46,6 +46,8 @@ public class SmokeTest {
         int result = MathCommons.addition(5, 3);
         System.out.println("Result: " + result); // Output: Result: 8
         assertEquals(8, result, "Expected 5 + 3 to equal 8");
+
+        var result2 = MathCommons.subtraction(5, 6);
     }
 
 }
