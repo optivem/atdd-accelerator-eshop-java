@@ -29,17 +29,23 @@ public class E2eTest {
 
     @Channel({ChannelType.UI, ChannelType.API})
     @TestTemplate
-    void shouldGenerateOrderNumberWhenPlacingOrder() {
-        shop.placeOrder("order: order1", "productId: 10", "quantity: 5");
-
-        shop.confirmOrderPlaced("order: order1", "orderNumberPrefix: ORD-");
+    void shouldGenerateOrderNumberWithPrefix() {
+        shop.placeOrder("order: order1");
+        shop.confirmOrderDetails("order: order1", "orderNumberPrefix: ORD-");
     }
 
     @Channel({ChannelType.UI, ChannelType.API})
     @TestTemplate
     void shouldRetainOrderDetailsAfterPlacement() {
         shop.placeOrder("order: order1", "productId: 11", "quantity: 3");
-        shop.confirmOrderDetails("order: order1", "productId: 11", "quantity: 3", "status: PLACED");
+        shop.confirmOrderDetails("order: order1", "productId: 11", "quantity: 3");
+    }
+
+    @Channel({ChannelType.UI, ChannelType.API})
+    @TestTemplate
+    void shouldHaveInitialStatusPlaced() {
+        shop.placeOrder("order: order1");
+        shop.confirmOrderDetails("order: order1", "status: PLACED");
     }
 
     @Channel({ChannelType.UI, ChannelType.API})

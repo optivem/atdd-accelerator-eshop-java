@@ -38,12 +38,6 @@ public class ShopDsl implements AutoCloseable {
         driver.confirmOrderPlaced(order, prefix);
     }
 
-    public void viewOrderDetails(String... args) {
-        var params = paramsFactory.create(args);
-        var order = params.getAlias("order");
-        driver.viewOrderDetails(order);
-    }
-
     public void confirmOrderDetails(String... args) {
         var params = paramsFactory.create(args);
         var order = params.getAlias("order");
@@ -57,17 +51,5 @@ public class ShopDsl implements AutoCloseable {
         var params = paramsFactory.create(args);
         var order = params.getAlias("order");
         driver.cancelOrder(order);
-    }
-
-    public void confirmOrderCancelled(String... args) {
-        var params = paramsFactory.create(args);
-        var order = params.getAlias("order");
-        driver.confirmOrderCancelled(order);
-    }
-
-    public void confirmOrderStatusIsCancelled(String... args) {
-        var params = paramsFactory.create(args);
-        var order = params.getAlias("order");
-        driver.confirmOrderStatusIsCancelled(order);
     }
 }
