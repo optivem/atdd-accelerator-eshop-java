@@ -32,5 +32,4 @@ public class SmokeTest {
     void shouldBeAbleToGoToShop() {
         shop.goToShop();
     }
-
 }

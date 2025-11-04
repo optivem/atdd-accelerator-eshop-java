@@ -28,6 +28,10 @@ public class DslParams {
         return paramMap.getOrDefault(key, defaultValue);
     }
 
+    public String getValue(String key) {
+        return paramMap.get(key);
+    }
+
     public String getAlias(String key) {
         var value = getValue(key);
         if (value == null) {
@@ -37,9 +41,6 @@ public class DslParams {
         return context.alias(value);
     }
 
-    private String getValue(String key) {
-        return paramMap.get(key);
-    }
 
     // TODO: VJ: The method getValue(...) is for a single value, but we could also have methods getListValue(...) or getMatrixValue(...) for additional types
 }
