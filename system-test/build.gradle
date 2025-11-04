@@ -29,6 +29,9 @@ dependencies {
 
 	testImplementation 'org.projectlombok:lombok:1.18.38'
 	testAnnotationProcessor 'org.projectlombok:lombok:1.18.38'
+
+    testImplementation 'org.junit.platform:junit-platform-suite-api:1.11.3'
+    testImplementation 'org.junit.platform:junit-platform-suite-engine:1.11.3'
 }
 
 tasks.named('test') {
