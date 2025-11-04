@@ -1,8 +1,8 @@
 package com.optivem.atddaccelerator.eshop.systemtest.e2etests;
 
 import com.optivem.atddaccelerator.eshop.systemtest.TestConfiguration;
-import com.optivem.atddaccelerator.eshop.systemtest.commons.channels.Channel;
-import com.optivem.atddaccelerator.eshop.systemtest.commons.channels.ChannelExtension;
+import com.optivem.atdd.commons.channels.Channel;
+import com.optivem.atdd.commons.channels.ChannelExtension;
 import com.optivem.atddaccelerator.eshop.systemtest.core.drivers.ChannelType;
 import com.optivem.atddaccelerator.eshop.systemtest.core.drivers.Driver;
 import com.optivem.atddaccelerator.eshop.systemtest.core.drivers.DriverFactory;

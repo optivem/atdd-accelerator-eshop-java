@@ -1,6 +1,6 @@
 package com.optivem.atddaccelerator.eshop.systemtest.core.drivers;
 
-import com.optivem.atddaccelerator.eshop.systemtest.commons.channels.ChannelContext;
+import com.optivem.atdd.commons.channels.ChannelContext;
 import com.optivem.atddaccelerator.eshop.systemtest.core.drivers.api.ApiDriver;
 import com.optivem.atddaccelerator.eshop.systemtest.core.drivers.ui.UiDriver;
 
