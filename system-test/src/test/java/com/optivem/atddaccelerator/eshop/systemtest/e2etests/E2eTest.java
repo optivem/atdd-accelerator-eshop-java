@@ -57,7 +57,6 @@ public class E2eTest {
         shop.confirmOrderDetails("order: order1", "status: CANCELLED");
     }
 
-    @Disabled
     @Channel({ChannelType.UI, ChannelType.API})
     @TestTemplate
     void shouldRejectOrderWithNegativeQuantity() {

@@ -4,6 +4,7 @@ import com.optivem.atddaccelerator.eshop.monolith.core.services.OrderService;
 import com.optivem.atddaccelerator.eshop.monolith.core.dtos.GetOrderResponse;
 import com.optivem.atddaccelerator.eshop.monolith.core.dtos.PlaceOrderRequest;
 import com.optivem.atddaccelerator.eshop.monolith.core.dtos.PlaceOrderResponse;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +20,7 @@ public class OrderController {
     }
 
     @PostMapping("/api/orders")
-    public ResponseEntity<PlaceOrderResponse> placeOrder(@RequestBody PlaceOrderRequest request) {
+    public ResponseEntity<PlaceOrderResponse> placeOrder(@Valid @RequestBody PlaceOrderRequest request) {
         var response = orderService.placeOrder(request);
         var location = URI.create("/api/orders/" + response.getOrderNumber());
         return ResponseEntity.created(location).body(response);

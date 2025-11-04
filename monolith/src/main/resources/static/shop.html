@@ -18,7 +18,7 @@
         </div>
         <div>
             <label for="quantity">Quantity:</label>
-            <input type="number" id="quantity" name="quantity" aria-label="Quantity" min="1" required />
+            <input type="number" id="quantity" name="quantity" aria-label="Quantity" required />
         </div>
         <button type="submit" aria-label="Place Order">Place Order</button>
     </form>
@@ -44,13 +44,17 @@
                     })
                 });
                 
+                const resultDiv = document.getElementById('orderResult');
+
                 if (response.ok) {
                     const order = await response.json();
-                    
-                    const resultDiv = document.getElementById('orderResult');
                     resultDiv.textContent = `Success! Order has been created with Order Number ${order.orderNumber} and Total Price $${order.totalPrice.toFixed(2)}`;
+                } else if (response.status === 422) {
+                    // Handle validation errors
+                    const errors = await response.json();
+                    const errorMessages = Object.values(errors).join(', ');
+                    resultDiv.textContent = errorMessages;
                 } else {
-                    const resultDiv = document.getElementById('orderResult');
                     resultDiv.textContent = 'Error placing order. Please try again.';
                 }
             } catch (error) {
