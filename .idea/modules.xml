@@ -4,7 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/atdd-accelerator-eshop-java.iml" filepath="$PROJECT_DIR$/.idea/atdd-accelerator-eshop-java.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.optivem.atddaccelerator.eshop.monolith.monolith.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.optivem.atddaccelerator.eshop.monolith.monolith.main.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/system-test.test.iml" filepath="$PROJECT_DIR$/.idea/modules/system-test.test.iml" />
     </modules>
   </component>
 </project>
