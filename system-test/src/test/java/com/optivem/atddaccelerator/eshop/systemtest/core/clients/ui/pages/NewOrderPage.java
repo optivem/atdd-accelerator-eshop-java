@@ -1,6 +1,5 @@
 package com.optivem.atddaccelerator.eshop.systemtest.core.clients.ui.pages;
 
-import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 
 public class NewOrderPage extends BasePage {
@@ -9,23 +8,18 @@ public class NewOrderPage extends BasePage {
     }
 
     public void inputProductId(String productId) {
-        var productIdInput = page.locator("[aria-label='Product ID']");
-        productIdInput.fill(productId);
+        fill("[aria-label=\"Product ID\"]", productId);
     }
 
     public void inputQuantity(String quantity) {
-        var quantityInput = page.locator("[aria-label='Quantity']");
-        quantityInput.fill(quantity);
+        fill("[aria-label=\"Quantity\"]", quantity);
     }
 
     public void clickPlaceOrder() {
-        var placeOrderButton = page.locator("[aria-label='Place Order']");
-        placeOrderButton.click();
+        click("[aria-label=\"Place Order\"]");
     }
 
     public String readConfirmationMessageText() {
-        var confirmationMessage = page.locator("[role='alert']");
-        wait(confirmationMessage);
-        return confirmationMessage.textContent();
+        return readTextContent("[role='alert']");
     }
 }

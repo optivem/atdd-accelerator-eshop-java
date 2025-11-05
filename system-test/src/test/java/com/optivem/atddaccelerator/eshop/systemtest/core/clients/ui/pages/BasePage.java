@@ -25,15 +25,29 @@ public abstract class BasePage {
         return baseUrl;
     }
 
-    protected String getUrl(String path) {
-        return baseUrl + path;
-    }
-
     private Locator.WaitForOptions getWaitForOptions() {
         return new Locator.WaitForOptions().setTimeout(timeoutMilliseconds);
     }
 
     protected void wait(Locator locator) {
         locator.waitFor(getWaitForOptions());
+    }
+
+    protected void fill(String selector, String text) {
+        var input = page.locator(selector);
+        wait(input);
+        input.fill(text);
+    }
+
+    protected void click(String selector) {
+        var button = page.locator(selector);
+        wait(button);
+        button.click();
+    }
+
+    protected String readTextContent(String selector) {
+        var locator = page.locator(selector);
+        wait(locator);
+        return locator.textContent();
     }
 }
