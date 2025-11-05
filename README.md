@@ -6,7 +6,7 @@
 [![qa-signoff](https://github.com/optivem/atdd-accelerator-eshop-java/actions/workflows/qa-signoff.yml/badge.svg)](https://github.com/optivem/atdd-accelerator-eshop-java/actions/workflows/qa-signoff.yml)
 [![prod-stage](https://github.com/optivem/atdd-accelerator-eshop-java/actions/workflows/prod-stage.yml/badge.svg)](https://github.com/optivem/atdd-accelerator-eshop-java/actions/workflows/prod-stage.yml)
 
-## Process
+## Steps
 
 - [Step 00 - Initial](https://github.com/optivem/atdd-accelerator-eshop-java/tree/step-00-initial)
 - [Step 01 - E2E Tests - Clients](https://github.com/optivem/atdd-accelerator-eshop-java/tree/step-01-e2e-tests-clients)
