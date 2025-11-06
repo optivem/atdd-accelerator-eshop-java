@@ -1,6 +1,9 @@
 spring:
   profiles:
     active: e2e
+  jackson:
+    deserialization:
+      ACCEPT_FLOAT_AS_INT: false
 
 ---
 spring:

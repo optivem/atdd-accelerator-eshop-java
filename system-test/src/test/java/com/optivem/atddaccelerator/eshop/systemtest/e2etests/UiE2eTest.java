@@ -212,4 +212,29 @@ class UiE2eTest {
         assertTrue(errorMessageText.contains("Quantity must be positive"),
                 "Error message should indicate quantity must be positive. Actual: " + errorMessageText);
     }
+
+    @Test
+    void shouldRejectOrderWithNonIntegerQuantity() {
+        // Act
+        page.navigate(baseUrl + "/shop.html");
+
+        var productIdInput = page.locator("[aria-label='Product ID']");
+        productIdInput.fill("10");
+
+        var quantityInput = page.locator("[aria-label='Quantity']");
+        quantityInput.fill("3.5");
+
+        var placeOrderButton = page.locator("[aria-label='Place Order']");
+        placeOrderButton.click();
+
+        // Wait for error message to appear
+        var errorMessage = page.locator("[role='alert']");
+        errorMessage.waitFor(new Locator.WaitForOptions().setTimeout(TestConfiguration.getWaitSeconds() * 1000));
+
+        var errorMessageText = errorMessage.textContent();
+
+        // Assert
+        assertTrue(errorMessageText.contains("Quantity must be an integer"),
+                "Error message should be 'Quantity must be an integer'. Actual: " + errorMessageText);
+    }
 }

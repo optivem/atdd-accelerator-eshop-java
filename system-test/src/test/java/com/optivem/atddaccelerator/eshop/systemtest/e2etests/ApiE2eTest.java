@@ -7,6 +7,9 @@ import lombok.Data;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.Arguments;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -16,6 +19,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.stream.Stream;
 
 class ApiE2eTest {
 
@@ -64,13 +68,14 @@ class ApiE2eTest {
         assertTrue(responseDto.getOrderNumber().startsWith("ORD-"), "Order number should start with ORD-");
     }
 
-    @Test
-    void getOrder_shouldReturnOrderDetails() throws Exception {
+    @ParameterizedTest
+    @MethodSource("provideOrderTestCases")
+    void getOrder_shouldReturnOrderDetails(long productId, int quantity) throws Exception {
         // Arrange - First place an order
         var placeOrderRequest = new PlaceOrderRequest();
-        placeOrderRequest.setProductId(11);
-        placeOrderRequest.setQuantity(3);
-        
+        placeOrderRequest.setProductId(productId);
+        placeOrderRequest.setQuantity(quantity);
+
         var requestBody = objectMapper.writeValueAsString(placeOrderRequest);
         
         var postRequest = HttpRequest.newBuilder()
@@ -97,12 +102,21 @@ class ApiE2eTest {
         var getOrderResponse = objectMapper.readValue(getResponse.body(), GetOrderResponse.class);
         
         assertEquals(orderNumber, getOrderResponse.getOrderNumber(), "Order number should match");
-        assertEquals(11L, getOrderResponse.getProductId(), "Product ID should be 11");
-        assertEquals(3, getOrderResponse.getQuantity(), "Quantity should be 3");
-        
-        // Price will come from DummyJSON API for product 11
+        assertEquals(productId, getOrderResponse.getProductId(), "Product ID should be " + productId);
+        assertEquals(quantity, getOrderResponse.getQuantity(), "Quantity should be " + quantity);
+
+        // Price will come from DummyJSON API for product
         assertNotNull(getOrderResponse.getUnitPrice(), "Unit price should not be null");
         assertNotNull(getOrderResponse.getTotalPrice(), "Total price should not be null");
+    }
+
+    private static Stream<Arguments> provideOrderTestCases() {
+        return Stream.of(
+            Arguments.of(11L, 3),   // Product 11 with standard quantity
+            Arguments.of(12L, 5),   // Product 12 with medium quantity
+            Arguments.of(13L, 1),   // Product 13 with minimum quantity
+            Arguments.of(14L, 10)   // Product 14 with large quantity
+        );
     }
 
     @Test
@@ -167,11 +181,38 @@ class ApiE2eTest {
         var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         // Assert
-        assertEquals(422, response.statusCode(), "Response status should be 400 Bad Request");
+        assertEquals(422, response.statusCode(), "Response status should be 422 Unprocessable Entity");
 
         var responseBody = response.body();
         assertTrue(responseBody.contains("Quantity must be positive"),
-                "Error message should indicate quantity must be positive. Actual: " + responseBody);
+                "Error message should be 'Quantity must be positive'. Actual: " + responseBody);
+    }
+
+    @Test
+    void shouldRejectOrderWithNonIntegerQuantity() throws Exception {
+        // Arrange - Send raw JSON with non-integer quantity (e.g., decimal or string)
+        String requestBodyWithDecimal = """
+                {
+                    "productId": 10,
+                    "quantity": 3.5
+                }
+                """;
+
+        var request = HttpRequest.newBuilder()
+                .uri(new URI(BASE_URL + "/api/orders"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBodyWithDecimal))
+                .build();
+
+        // Act
+        var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        // Assert
+        assertEquals(400, response.statusCode(), "Response status should be 400 Bad Request");
+
+        var responseBody = response.body();
+        assertTrue(responseBody.contains("Quantity must be an integer"),
+                "Error message should be 'Quantity must be an integer'. Actual: " + responseBody);
     }
 
     @Data

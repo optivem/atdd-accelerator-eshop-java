@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shop - ATDD Accelerator eShop</title>
+    <style>
+        #orderResult {
+            margin-top: 10px;
+            padding: 10px;
+            display: none;
+        }
+        #orderResult.show {
+            display: block;
+        }
+    </style>
 </head>
 <body>
     <h1>Shop</h1>
@@ -18,7 +28,7 @@
         </div>
         <div>
             <label for="quantity">Quantity:</label>
-            <input type="number" id="quantity" name="quantity" aria-label="Quantity" required />
+            <input type="text" id="quantity" name="quantity" aria-label="Quantity" inputmode="numeric" required />
         </div>
         <button type="submit" aria-label="Place Order">Place Order</button>
     </form>
@@ -29,10 +39,34 @@
         document.getElementById('orderForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const productId = parseInt(document.getElementById('productId').value);
-            const quantity = parseInt(document.getElementById('quantity').value);
-            
+            const resultDiv = document.getElementById('orderResult');
+
             try {
+                const productIdValue = document.getElementById('productId').value;
+                const quantityValue = document.getElementById('quantity').value;
+
+                // Clear previous messages and hide
+                resultDiv.textContent = '';
+                resultDiv.classList.remove('show');
+
+                // Validate that quantity is an integer
+                const quantityNum = parseFloat(quantityValue);
+                if (isNaN(quantityNum) || !Number.isInteger(quantityNum)) {
+                    resultDiv.textContent = 'Quantity must be an integer';
+                    resultDiv.classList.add('show');
+                    return;
+                }
+
+                const productId = parseInt(productIdValue);
+                const quantity = parseInt(quantityValue);
+
+                // Validate that quantity is positive
+                if (quantity <= 0) {
+                    resultDiv.textContent = 'Quantity must be positive';
+                    resultDiv.classList.add('show');
+                    return;
+                }
+
                 const response = await fetch('/api/orders', {
                     method: 'POST',
                     headers: {
@@ -43,23 +77,35 @@
                         quantity: quantity
                     })
                 });
-                
-                const resultDiv = document.getElementById('orderResult');
 
                 if (response.ok) {
                     const order = await response.json();
-                    resultDiv.textContent = `Success! Order has been created with Order Number ${order.orderNumber} and Total Price $${order.totalPrice.toFixed(2)}`;
-                } else if (response.status === 422) {
-                    // Handle validation errors
-                    const errors = await response.json();
-                    const errorMessages = Object.values(errors).join(', ');
-                    resultDiv.textContent = errorMessages;
+                    resultDiv.textContent = 'Success! Order has been created with Order Number ' + order.orderNumber + ' and Total Price $' + order.totalPrice.toFixed(2);
+                    resultDiv.classList.add('show');
+                } else if (response.status === 400 || response.status === 422) {
+                    // Handle parsing errors (400) and validation errors (422)
+                    const contentType = response.headers.get("content-type");
+                    if (contentType && contentType.includes("application/json")) {
+                        const errorData = await response.json();
+                        // Check if it's a simple error response or a map of field errors
+                        if (errorData.message) {
+                            resultDiv.textContent = errorData.message;
+                        } else {
+                            const errorMessages = Object.values(errorData).join(', ');
+                            resultDiv.textContent = errorMessages;
+                        }
+                        resultDiv.classList.add('show');
+                    } else {
+                        resultDiv.textContent = 'Validation error. Please check your input.';
+                        resultDiv.classList.add('show');
+                    }
                 } else {
                     resultDiv.textContent = 'Error placing order. Please try again.';
+                    resultDiv.classList.add('show');
                 }
             } catch (error) {
-                const resultDiv = document.getElementById('orderResult');
                 resultDiv.textContent = 'Error placing order. Please try again.';
+                resultDiv.classList.add('show');
                 console.error('Error:', error);
             }
         });
