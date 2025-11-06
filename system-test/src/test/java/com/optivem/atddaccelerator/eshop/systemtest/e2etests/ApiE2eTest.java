@@ -43,9 +43,9 @@ class ApiE2eTest {
     void placeOrder_shouldReturnOrderNumber() throws Exception {
         // Arrange
         var requestDto = new PlaceOrderRequest();
-        requestDto.setProductId(10);
-        requestDto.setQuantity(5);
-        
+        requestDto.setProductId("10");
+        requestDto.setQuantity("5");
+
         var requestBody = objectMapper.writeValueAsString(requestDto);
         
         var request = HttpRequest.newBuilder()
@@ -73,8 +73,8 @@ class ApiE2eTest {
     void getOrder_shouldReturnOrderDetails(long productId, int quantity) throws Exception {
         // Arrange - First place an order
         var placeOrderRequest = new PlaceOrderRequest();
-        placeOrderRequest.setProductId(productId);
-        placeOrderRequest.setQuantity(quantity);
+        placeOrderRequest.setProductId(String.valueOf(productId));
+        placeOrderRequest.setQuantity(String.valueOf(quantity));
 
         var requestBody = objectMapper.writeValueAsString(placeOrderRequest);
         
@@ -123,9 +123,9 @@ class ApiE2eTest {
     void cancelOrder_shouldSetStatusToCancelled() throws Exception {
         // Arrange - First place an order
         var placeOrderRequest = new PlaceOrderRequest();
-        placeOrderRequest.setProductId(12);
-        placeOrderRequest.setQuantity(2);
-        
+        placeOrderRequest.setProductId("12");
+        placeOrderRequest.setQuantity("2");
+
         var requestBody = objectMapper.writeValueAsString(placeOrderRequest);
         
         var postRequest = HttpRequest.newBuilder()
@@ -166,8 +166,8 @@ class ApiE2eTest {
     void shouldRejectOrderWithNegativeQuantity() throws Exception {
         // Arrange
         var requestDto = new PlaceOrderRequest();
-        requestDto.setProductId(10);
-        requestDto.setQuantity(-5);
+        requestDto.setProductId("10");
+        requestDto.setQuantity("-5");
 
         var requestBody = objectMapper.writeValueAsString(requestDto);
 
@@ -188,37 +188,46 @@ class ApiE2eTest {
                 "Error message should be 'Quantity must be positive'. Actual: " + responseBody);
     }
 
-    @Test
-    void shouldRejectOrderWithNonIntegerQuantity() throws Exception {
-        // Arrange - Send raw JSON with non-integer quantity (e.g., decimal or string)
-        String requestBodyWithDecimal = """
-                {
-                    "productId": 10,
-                    "quantity": 3.5
-                }
-                """;
+    private static Stream<Arguments> provideInvalidQuantityValues() {
+        return Stream.of(
+                Arguments.of("3.5"),    // Decimal value
+                Arguments.of("lala")    // String value
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideInvalidQuantityValues")
+    void shouldRejectOrderWithNonIntegerQuantity(String quantityValue) throws Exception {
+        // Arrange
+        var requestDto = new PlaceOrderRequest();
+        requestDto.setProductId("10");
+        requestDto.setQuantity(quantityValue);
+
+        var requestBody = objectMapper.writeValueAsString(requestDto);
 
         var request = HttpRequest.newBuilder()
                 .uri(new URI(BASE_URL + "/api/orders"))
                 .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(requestBodyWithDecimal))
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                 .build();
 
         // Act
         var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
         // Assert
-        assertEquals(400, response.statusCode(), "Response status should be 400 Bad Request");
+        assertEquals(400, response.statusCode(), "Response status should be 400 Bad Request for quantity: " + quantityValue);
 
         var responseBody = response.body();
         assertTrue(responseBody.contains("Quantity must be an integer"),
                 "Error message should be 'Quantity must be an integer'. Actual: " + responseBody);
     }
 
+
+
     @Data
     static class PlaceOrderRequest {
-        private long productId;
-        private int quantity;
+        private String productId;
+        private String quantity;
     }
     
     @Data
