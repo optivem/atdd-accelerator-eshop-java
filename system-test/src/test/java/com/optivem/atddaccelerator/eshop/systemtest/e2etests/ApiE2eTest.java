@@ -147,7 +147,33 @@ class ApiE2eTest {
         var getOrderResponse = objectMapper.readValue(getResponse.body(), GetOrderResponse.class);
         assertEquals("CANCELLED", getOrderResponse.getStatus(), "Order status should be CANCELLED");
     }
-    
+
+    @Test
+    void shouldRejectOrderWithNegativeQuantity() throws Exception {
+        // Arrange
+        var requestDto = new PlaceOrderRequest();
+        requestDto.setProductId(10);
+        requestDto.setQuantity(-5);
+
+        var requestBody = objectMapper.writeValueAsString(requestDto);
+
+        var request = HttpRequest.newBuilder()
+                .uri(new URI(BASE_URL + "/api/orders"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
+
+        // Act
+        var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        // Assert
+        assertEquals(422, response.statusCode(), "Response status should be 400 Bad Request");
+
+        var responseBody = response.body();
+        assertTrue(responseBody.contains("Quantity must be positive"),
+                "Error message should indicate quantity must be positive. Actual: " + responseBody);
+    }
+
     @Data
     static class PlaceOrderRequest {
         private long productId;
