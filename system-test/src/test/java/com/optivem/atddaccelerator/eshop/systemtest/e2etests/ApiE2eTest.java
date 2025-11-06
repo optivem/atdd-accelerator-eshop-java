@@ -162,6 +162,7 @@ class ApiE2eTest {
         assertEquals("CANCELLED", getOrderResponse.getStatus(), "Order status should be CANCELLED");
     }
 
+
     @Test
     void shouldRejectOrderWithNegativeQuantity() throws Exception {
         // Arrange

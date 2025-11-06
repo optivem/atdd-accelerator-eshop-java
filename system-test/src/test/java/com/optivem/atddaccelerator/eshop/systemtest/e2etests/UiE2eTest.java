@@ -5,10 +5,14 @@ import com.optivem.atddaccelerator.eshop.systemtest.TestConfiguration;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.Arguments;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 class UiE2eTest {
     
@@ -213,8 +217,9 @@ class UiE2eTest {
                 "Error message should indicate quantity must be positive. Actual: " + errorMessageText);
     }
 
-    @Test
-    void shouldRejectOrderWithNonIntegerQuantity() {
+    @ParameterizedTest
+    @MethodSource("provideInvalidQuantityValues")
+    void shouldRejectOrderWithNonIntegerQuantity(String quantityValue) {
         // Act
         page.navigate(baseUrl + "/shop.html");
 
@@ -222,7 +227,7 @@ class UiE2eTest {
         productIdInput.fill("10");
 
         var quantityInput = page.locator("[aria-label='Quantity']");
-        quantityInput.fill("3.5");
+        quantityInput.fill(quantityValue);
 
         var placeOrderButton = page.locator("[aria-label='Place Order']");
         placeOrderButton.click();
@@ -235,6 +240,13 @@ class UiE2eTest {
 
         // Assert
         assertTrue(errorMessageText.contains("Quantity must be an integer"),
-                "Error message should be 'Quantity must be an integer'. Actual: " + errorMessageText);
+                "Error message should be 'Quantity must be an integer' for quantity: " + quantityValue + ". Actual: " + errorMessageText);
+    }
+
+    private static Stream<Arguments> provideInvalidQuantityValues() {
+        return Stream.of(
+                Arguments.of("3.5"),   // Decimal value
+                Arguments.of("lala")   // String value
+        );
     }
 }
