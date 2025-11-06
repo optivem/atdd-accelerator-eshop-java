@@ -24,7 +24,7 @@
     <form id="orderForm" method="post" action="/shop">
         <div>
             <label for="productId">Product ID:</label>
-            <input type="number" id="productId" name="productId" aria-label="Product ID" min="1" required />
+            <input type="text" id="productId" name="productId" aria-label="Product ID" inputmode="numeric" required />
         </div>
         <div>
             <label for="quantity">Quantity:</label>
@@ -48,6 +48,14 @@
                 // Clear previous messages and hide
                 resultDiv.textContent = '';
                 resultDiv.classList.remove('show');
+
+                // Validate that product ID is an integer
+                const productIdNum = parseFloat(productIdValue);
+                if (isNaN(productIdNum) || !Number.isInteger(productIdNum)) {
+                    resultDiv.textContent = 'Product ID must be an integer';
+                    resultDiv.classList.add('show');
+                    return;
+                }
 
                 // Validate that quantity is an integer
                 const quantityNum = parseFloat(quantityValue);

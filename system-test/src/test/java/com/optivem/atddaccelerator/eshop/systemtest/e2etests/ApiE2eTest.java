@@ -197,6 +197,40 @@ class ApiE2eTest {
     }
 
     @ParameterizedTest
+    @MethodSource("provideInvalidProductIdValues")
+    void shouldRejectOrderWithNonIntegerProductId(String productIdValue) throws Exception {
+        // Arrange
+        var requestDto = new PlaceOrderRequest();
+        requestDto.setProductId(productIdValue);
+        requestDto.setQuantity("5");
+
+        var requestBody = objectMapper.writeValueAsString(requestDto);
+
+        var request = HttpRequest.newBuilder()
+                .uri(new URI(BASE_URL + "/api/orders"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
+
+        // Act
+        var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+
+        // Assert
+        assertEquals(400, response.statusCode(), "Response status should be 400 Bad Request for productId: " + productIdValue);
+
+        var responseBody = response.body();
+        assertTrue(responseBody.contains("Product ID must be an integer"),
+                "Error message should be 'Product ID must be an integer'. Actual: " + responseBody);
+    }
+
+    private static Stream<Arguments> provideInvalidProductIdValues() {
+        return Stream.of(
+                Arguments.of("10.5"),   // Decimal value
+                Arguments.of("xyz")     // String value
+        );
+    }
+
+    @ParameterizedTest
     @MethodSource("provideInvalidQuantityValues")
     void shouldRejectOrderWithNonIntegerQuantity(String quantityValue) throws Exception {
         // Arrange

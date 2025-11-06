@@ -249,4 +249,37 @@ class UiE2eTest {
                 Arguments.of("lala")   // String value
         );
     }
+
+    @ParameterizedTest
+    @MethodSource("provideInvalidProductIdValues")
+    void shouldRejectOrderWithNonIntegerProductId(String productIdValue) {
+        // Act
+        page.navigate(baseUrl + "/shop.html");
+
+        var productIdInput = page.locator("[aria-label='Product ID']");
+        productIdInput.fill(productIdValue);
+
+        var quantityInput = page.locator("[aria-label='Quantity']");
+        quantityInput.fill("5");
+
+        var placeOrderButton = page.locator("[aria-label='Place Order']");
+        placeOrderButton.click();
+
+        // Wait for error message to appear
+        var errorMessage = page.locator("[role='alert']");
+        errorMessage.waitFor(new Locator.WaitForOptions().setTimeout(TestConfiguration.getWaitSeconds() * 1000));
+
+        var errorMessageText = errorMessage.textContent();
+
+        // Assert
+        assertTrue(errorMessageText.contains("Product ID must be an integer"),
+                "Error message should be 'Product ID must be an integer' for productId: " + productIdValue + ". Actual: " + errorMessageText);
+    }
+
+    private static Stream<Arguments> provideInvalidProductIdValues() {
+        return Stream.of(
+                Arguments.of("10.5"),  // Decimal value
+                Arguments.of("xyz")    // String value
+        );
+    }
 }
