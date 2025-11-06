@@ -1,11 +1,14 @@
 package com.optivem.atddaccelerator.eshop.systemtest.core.clients.api.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpStatus;
 
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public abstract class BaseControllerClient {
 
@@ -19,15 +22,59 @@ public abstract class BaseControllerClient {
         this.baseUrl = baseUrl;
     }
 
-    protected URI getBaseUri() {
-        try {
-            return new URI(baseUrl);
-        } catch (Exception ex) {
-            throw new RuntimeException(ex);
-        }
+    protected HttpResponse<String> get(String endpoint) {
+        var uri = getUri(endpoint);
+        var request = HttpRequest.newBuilder()
+                .uri(uri)
+                .GET()
+                .build();
+
+        return sendRequest(request);
     }
 
-    protected URI getUri(String path) {
+    protected HttpResponse<String> post(String endpoint, Object requestBody) {
+        var uri = getUri(endpoint);
+        var jsonBody = serializeRequest(requestBody);
+
+        var request = HttpRequest.newBuilder()
+                .uri(uri)
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
+                .build();
+
+        return sendRequest(request);
+    }
+
+    protected HttpResponse<String> post(String endpoint) {
+        var uri = getUri(endpoint);
+
+        var request = HttpRequest.newBuilder()
+                .uri(uri)
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.noBody())
+                .build();
+
+        return sendRequest(request);
+    }
+
+    protected void assertOk(HttpResponse<String> httpResponse) {
+        assertStatus(httpResponse, HttpStatus.OK);
+    }
+
+    protected void assertCreated(HttpResponse<String> httpResponse) {
+        assertStatus(httpResponse, HttpStatus.CREATED);
+    }
+
+    protected void assertNoContent(HttpResponse<String> httpResponse) {
+        assertStatus(httpResponse, HttpStatus.NO_CONTENT);
+    }
+
+    private void assertStatus(HttpResponse<String> httpResponse, HttpStatus expectedStatus) {
+        assertEquals(expectedStatus.value(), httpResponse.statusCode());
+
+    }
+
+    private URI getUri(String path) {
         try {
             return new URI(baseUrl + "/" + path);
         } catch (Exception ex) {
@@ -44,7 +91,7 @@ public abstract class BaseControllerClient {
         }
     }
 
-    protected String serializeRequest(Object request) {
+    private String serializeRequest(Object request) {
         try {
             return objectMapper.writeValueAsString(request);
         } catch (Exception ex) {
@@ -52,7 +99,7 @@ public abstract class BaseControllerClient {
         }
     }
 
-    protected HttpResponse<String> sendRequest(HttpRequest httpRequest) {
+    private HttpResponse<String> sendRequest(HttpRequest httpRequest) {
         try {
             return httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
         } catch (Exception ex) {

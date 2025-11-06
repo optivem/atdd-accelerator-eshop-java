@@ -22,53 +22,30 @@ public class OrderControllerClient extends BaseControllerClient {
         request.setProductId(productId);
         request.setQuantity(quantity);
 
-        var requestBody = serializeRequest(request);
-
-        var uri = getUri("api/orders");
-
-        var httpRequest = HttpRequest.newBuilder()
-                .uri(uri)
-                .header("Content-Type", "application/json")
-                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-                .build();
-
-        return sendRequest(httpRequest);
+        return post("api/orders", request);
     }
 
     public PlaceOrderResponse confirmOrderPlacedSuccessfully(HttpResponse<String> httpResponse) {
-        assertEquals(HttpStatus.CREATED.value(), httpResponse.statusCode());
+        assertCreated(httpResponse);
         return readBody(httpResponse, PlaceOrderResponse.class);
     }
 
     public HttpResponse<String> viewOrder(String orderNumber) {
-        var uri = getUri("api/orders/" + orderNumber);
-
-        var httpRequest = HttpRequest.newBuilder()
-                .uri(uri)
-                .GET()
-                .build();
-
-        return sendRequest(httpRequest);
+        var endpoint = "api/orders/" + orderNumber;
+        return get(endpoint);
     }
 
     public GetOrderResponse confirmOrderViewedSuccessfully(HttpResponse<String> httpResponse) {
-        assertEquals(HttpStatus.OK.value(), httpResponse.statusCode());
+        assertOk(httpResponse);
         return readBody(httpResponse, GetOrderResponse.class);
     }
 
     public HttpResponse<String> cancelOrder(String orderNumber) {
-        var uri = getUri("api/orders/" + orderNumber + "/cancel");
-
-        var httpRequest = HttpRequest.newBuilder()
-                .uri(uri)
-                .POST(HttpRequest.BodyPublishers.noBody())
-                .build();
-
-        return sendRequest(httpRequest);
+        var endpoint = "api/orders/" + orderNumber + "/cancel";
+        return post(endpoint);
     }
 
     public void confirmOrderCancelledSuccessfully(HttpResponse<String> httpResponse) {
-        assertEquals(HttpStatus.NO_CONTENT.value(), httpResponse.statusCode());
+        assertNoContent(httpResponse);
     }
-
 }

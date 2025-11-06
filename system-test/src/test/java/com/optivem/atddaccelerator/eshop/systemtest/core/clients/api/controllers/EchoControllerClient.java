@@ -17,18 +17,11 @@ public class EchoControllerClient extends BaseControllerClient {
     }
 
     public HttpResponse<String> echo() {
-        var uri = getUri("api/echo");
-
-        var request = HttpRequest.newBuilder()
-                .uri(uri)
-                .GET()
-                .build();
-
-        return sendRequest(request);
+        return get("api/echo");
     }
 
     public void confirmEchoSuccessful(HttpResponse<String> httpResponse) {
-        assertEquals(HttpStatus.OK.value(), httpResponse.statusCode());
+        assertOk(httpResponse);
     }
 
 }
